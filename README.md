@@ -1,4 +1,4 @@
-# telegram_help_bot
+# ods_help_bot
 ## About
 Telegram bot trained on Open Data Science slack history
 - `chatbot.py` - telegram bot for messaging
@@ -19,6 +19,3 @@ Telegram bot trained on Open Data Science slack history
 
 ## Finite automaton
 ![](https://github.com/ods-pet-projects/ods_help_bot/blob/master/_chatbot_graph.png)
-
-
-
