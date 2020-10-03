@@ -2,7 +2,7 @@ import os
 import glob
 import json
 import pandas as pd
-
+from config import DATA
 from text_utils.utils import create_logger
 
 
@@ -18,8 +18,8 @@ def timeit(func):
 
 @timeit
 def main(logger):
-    idir = 'data/opendatascience Slack export Mar 12 2015 - Sep 18 2020'
-    ofile_path = 'data/ods_slack_all.csv'
+    idir = f'{DATA}/opendatascience Slack export Mar 12 2015 - Sep 18 2020'
+    ofile_path = f'{DATA}/ods_slack_all.csv'
     lines = []
     for channel_dir in glob.glob(f'{idir}/*[!.json]'):
         channel_files = glob.glob(f'{channel_dir}/*.json')
