@@ -3,6 +3,7 @@
 Telegram bot trained on Open Data Science slack history
 - `chatbot.py` - telegram bot for messaging
 - `support_model.py` - question answering AI
+- `scripts/prepare_data.py` - dataset parsing
 - `models` - answering models
 - - `elasticsearch_baseline` - fuzzy search
 - - `bert_emb_baseline` - BERT embedding ranking model
