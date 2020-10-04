@@ -111,21 +111,25 @@ def get_doc_title(doc_text):
 
 def add_doc_to_index(doc):
     try:
-        res = es.index(index="some-index", doc_type="text", body=doc)
+        es.index(index="some-index", doc_type="text", body=doc)
+        return True
     except Exception as ex:
         print(ex)
-        pass
+    return False
 
 
 def build_index():
-    subprocess.call('curl -XDELETE localhost:9200/some-index', shell=True)
-    doc_dir = 'data'
+    if es.indices.exists(index="some-index"):
+        es.indices.delete(index="some-index", ignore=[400, 404])
+    doc_dir = DATA
     data = pd.read_csv(f'{doc_dir}/help_title_v2.csv')
     init_len = len(data)
     data = data.query('section_4 not in ["Overview", "Important Information"]')
     after_len = len(data)
     print('dropped ', init_len - after_len, ' rows')
     success_count = 0
+
+    # Fields in document
     # section_1,url_1,section_2,url_2,section_3,url_3,section_4,url_4,section_text,keywords,text_len
 
     for doc_id, doc_row in data.iterrows():
@@ -151,13 +155,11 @@ def build_index():
                'section_3': doc_row['section_3'],
                'section_4': doc_row['section_4'],
                }
-        try:
-            res = es.index(index="some-index", doc_type="text", body=doc)
+
+        if add_doc_to_index(doc):
             success_count += 1
             print(success_count)
-        except Exception as ex:
-            print(ex)
-            pass
+
     print(f'success {success_count / (doc_id + 1):0.2f}')
     check_elastic_ans()
 
