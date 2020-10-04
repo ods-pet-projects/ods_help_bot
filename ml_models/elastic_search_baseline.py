@@ -92,13 +92,13 @@ def print_res(res):
                 break
             doc_title = item['_source']['doc_title']
 
-            doc_preview_text = '\n'.join(item['_source']["show_text"].split('\n')[2:])
+            doc_preview_text = item['_source']["show_text"]
             doc_preview_text = doc_preview_text[: MAX_TEXT_LEN] + '...'
             ans_line = "\n".join(["\n_______ " + f"<b>{doc_title}</b>", doc_preview_text, item['_source']['link']])
             if ans_line not in ans_list:
                 ans_list.append(ans_line)
 
-        return "\n".join(ans_list + ['___________________________________'])
+        return "\n".join(ans_list + ['***********************************'])
     else:
         return "not found"
 
@@ -122,45 +122,28 @@ def build_index():
     if es.indices.exists(index="some-index"):
         es.indices.delete(index="some-index", ignore=[400, 404])
     doc_dir = DATA
-    data = pd.read_csv(f'{doc_dir}/help_title_v2.csv')
-    init_len = len(data)
-    data = data.query('section_4 not in ["Overview", "Important Information"]')
-    after_len = len(data)
-    print('dropped ', init_len - after_len, ' rows')
+    data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
     success_count = 0
+    doc_id = 0
 
-    # Fields in document
-    # section_1,url_1,section_2,url_2,section_3,url_3,section_4,url_4,section_text,keywords,text_len
+    for doc_id, doc_row in data.head(1000).iterrows():
+        client_msg_id = doc_row['client_msg_id']
+        channel = doc_row['channel']
+        text = doc_row['text']
 
-    for doc_id, doc_row in data.iterrows():
-        doc_title = f"{doc_row['section_1']}/{doc_row['section_2']}/{doc_row['section_3']}/{doc_row['section_4']}"
-        doc_link = doc_row['url_4']
-
-        keywords = doc_row['keywords'].replace('[', '').replace(']', '').replace("'", '') \
-            if doc_row['keywords'] and doc_row['keywords'] == doc_row['keywords'] else ""
-
-        text = doc_title + '\n' + str(doc_row['keywords']) + '\n' + str(doc_row['section_text'])
-        section_text = str(doc_row['section_text'])
-        if not section_text or len(section_text) < 20:
-            continue
-
-        doc = {"doc_id": doc_id,
-               "doc_title": doc_title,
-               "show_text": doc_row['section_text'],
-               "text": text,
-               "keywords": keywords,
-               'link': doc_link,
-               'section_1': doc_row['section_1'],
-               'section_2': doc_row['section_2'],
-               'section_3': doc_row['section_3'],
-               'section_4': doc_row['section_4'],
-               }
+        doc = {
+            "doc_id": client_msg_id,
+            "doc_title": channel,
+            "text": text,
+            "show_text": text[:140],
+            "link": "example.com"
+        }
 
         if add_doc_to_index(doc):
             success_count += 1
             print(success_count)
 
-    print(f'success {success_count / (doc_id + 1):0.2f}')
+    print(f'success rate {success_count / (doc_id + 1):0.2f}')
     check_elastic_ans()
 
 
