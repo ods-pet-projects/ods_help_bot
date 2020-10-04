@@ -6,6 +6,8 @@ import re
 import subprocess
 from elasticsearch import Elasticsearch
 import pandas as pd
+import sys
+sys.path.append('..')
 from config import DATA
 
 MAX_ANSWER_COUNT = 3

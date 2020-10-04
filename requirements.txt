@@ -55,5 +55,5 @@ tqdm==4.49.0
 traitlets==4.3.3
 urllib3==1.25.10
 wcwidth==0.2.5
-deeppavlov==0.12.1
+deeppavlov
 
