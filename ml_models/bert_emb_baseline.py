@@ -105,8 +105,8 @@ class BertEmbedder:
 
 
 class BertIndexer:
-    def __init__(self, bert_model=BertEmbedder()):
-        self.model = bert_model
+    def __init__(self, bert_model=None):
+        self.model = bert_model or BertEmbedder()
         self.space_type = 'cosinesimil'
         self.method_name = 'hnsw'
         self.index = nmslib.init(space=self.space_type,
@@ -207,4 +207,4 @@ def format_msg(ind):
 
 def get_answer(query):
     ans_list = [f'\n_____ {format_msg(ind)}' for k, ind in indexer.return_closest(query, k=4)]
-    return "\n".join(["Probably you mean: "] + ans_list + ['___________________________________'])
+    return ans_list

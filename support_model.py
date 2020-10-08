@@ -2,7 +2,13 @@
 from gensim.summarization import keywords
 from gensim.parsing.preprocessing import remove_stopwords
 import enum
-from ml_models import elastic_search_baseline, bert_emb_baseline, bpe_baseline
+import os
+
+test_mode = not os.environ.get('TOKEN')
+if test_mode:
+    elastic_search_baseline, bert_emb_baseline, bpe_baseline = 1, 2, 3
+else:
+    from ml_models import elastic_search_baseline, bert_emb_baseline, bpe_baseline
 
 
 class ModelNames(enum.Enum):
@@ -32,17 +38,18 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
         query = get_keywords(query)
     if use_remove_stopwords:
         query = remove_stop_words_func(query)
+
     try:
         if model_name == ModelNames.ELASTIC:
-            return elastic_search_baseline.get_answer(query)
+           answer_list = elastic_search_baseline.get_answer(query)
         if model_name == ModelNames.BERT:
-            return bert_emb_baseline.get_answer(query)
+            answer_list = bert_emb_baseline.get_answer(query)
         if model_name == ModelNames.BPE:
-            return bpe_baseline.get_answer(query)
-
+            answer_list = bpe_baseline.get_answer(query)
+        return answer_list or ["not found :(\nPlease paraphrase your query"]
     except Exception as ex:
         print(ex)
-        return "not found :(\nPlease paraphrase your query"
+        return ["not found :(\nPlease paraphrase your query"]
 
 
 def main():

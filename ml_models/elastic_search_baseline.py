@@ -7,11 +7,12 @@ import subprocess
 from elasticsearch import Elasticsearch
 import pandas as pd
 import sys
+
 sys.path.append('..')
 from config import DATA
 
 MAX_ANSWER_COUNT = 3
-MAX_TEXT_LEN = 280
+MAX_TEXT_LEN = 300
 es = Elasticsearch()
 
 
@@ -88,21 +89,21 @@ def process_input_files():
 
 def print_res(res):
     if len(res['hits']['hits']) > 0:
-        ans_list = ["Here you can find the instructions: "]
+        ans_list = []
         for i, item in enumerate(res['hits']['hits']):
             if i > MAX_ANSWER_COUNT:
                 break
-            doc_title = item['_source']['doc_title']
 
-            doc_preview_text = item['_source']["show_text"]
+            doc_title = item['_source']['doc_title']
+            doc_preview_text = item['_source']["show_text"].replace("<", "").replace(">", "")
             doc_preview_text = doc_preview_text[: MAX_TEXT_LEN] + '...'
-            ans_line = "\n".join(["\n_______ " + f"<b>{doc_title}</b>", doc_preview_text, item['_source']['link']])
+            ans_line = "\n".join([f"Answer from channel <b>{doc_title}:</b>", '______________________', doc_preview_text])
             if ans_line not in ans_list:
                 ans_list.append(ans_line)
 
-        return "\n".join(ans_list + ['***********************************'])
+        return ans_list
     else:
-        return "not found"
+        return ["not found"]
 
 
 def get_doc_title(doc_text):
@@ -120,6 +121,12 @@ def add_doc_to_index(doc):
     return False
 
 
+def find_urls(string):
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    url = re.findall(regex, string)
+    return [x[0] for x in url]
+
+
 def build_index():
     if es.indices.exists(index="some-index"):
         es.indices.delete(index="some-index", ignore=[400, 404])
@@ -128,17 +135,18 @@ def build_index():
     success_count = 0
     doc_id = 0
 
-    for doc_id, doc_row in data.head(1000).iterrows():
+    for doc_id, doc_row in data.head(500).iterrows():
         client_msg_id = doc_row['client_msg_id']
         channel = doc_row['channel']
         text = doc_row['text']
+        doc_links = find_urls(text)
 
         doc = {
             "doc_id": client_msg_id,
             "doc_title": channel,
             "text": text,
-            "show_text": text[:140],
-            "link": "example.com"
+            "show_text": text[:MAX_TEXT_LEN],
+            "link": doc_links
         }
 
         if add_doc_to_index(doc):
