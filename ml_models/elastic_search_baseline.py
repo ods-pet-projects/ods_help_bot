@@ -103,7 +103,7 @@ def print_res(res):
 
         return ans_list
     else:
-        return ["not found"]
+        return ["not found :(\nPlease paraphrase your query"]
 
 
 def get_doc_title(doc_text):

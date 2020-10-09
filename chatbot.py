@@ -37,7 +37,8 @@ What about sentence1? thing1_title. thing1. https://link
 What about sentence2? thing2_title. thing2. https://link
 `''',
     'question_add_failed': ' adding question failed. Please reformat question.',
-    'assessment_query': 'Please send chatbot answer assessment:'
+    'assessment_query': 'Please send chatbot answer assessment:',
+    'not_found_msg': 'not found :(\nPlease paraphrase your query'
 }
 
 logger = logging.getLogger(__name__)
@@ -123,12 +124,15 @@ def reply(update, context):
     logger.info('reply msg query: `%s`', query)
     logger.info('reply msg answer: `%s`', ans_list)
     logger.info('reply msg to user: @%s', update.message.chat.username)
-    keyboard = [
-        [InlineKeyboardButton("Next", callback_data='Next')],
-        [InlineKeyboardButton("Good", callback_data='Good'), InlineKeyboardButton("Bad", callback_data='Bad')],
-    ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = None
+    if ans_list[0] != replies['not_found_msg']:
+        keyboard = [
+            [InlineKeyboardButton("Next", callback_data='Next')],
+            [InlineKeyboardButton("Good", callback_data='Good'), InlineKeyboardButton("Bad", callback_data='Bad')],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=ans_list[0],

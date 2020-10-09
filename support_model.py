@@ -40,13 +40,14 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
         query = remove_stop_words_func(query)
 
     try:
+        answer_list = []
         if model_name == ModelNames.ELASTIC:
-           answer_list = elastic_search_baseline.get_answer(query)
+            answer_list = elastic_search_baseline.get_answer(query)
         if model_name == ModelNames.BERT:
             answer_list = bert_emb_baseline.get_answer(query)
         if model_name == ModelNames.BPE:
             answer_list = bpe_baseline.get_answer(query)
-        return answer_list or ["not found :(\nPlease paraphrase your query"]
+        return answer_list
     except Exception as ex:
         print(ex)
         return ["not found :(\nPlease paraphrase your query"]
