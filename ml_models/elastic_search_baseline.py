@@ -95,7 +95,7 @@ def print_res(res):
                 break
 
             doc_title = item['_source']['doc_title']
-            doc_preview_text = item['_source']["show_text"].replace("<", "").replace(">", "")
+            doc_preview_text = replace_name(item['_source']["show_text"])
             doc_preview_text = doc_preview_text[: MAX_TEXT_LEN] + '...'
             ans_line = "\n".join([f"Answer from channel <b>{doc_title}:</b>", '______________________', doc_preview_text])
             if ans_line not in ans_list:
@@ -104,6 +104,10 @@ def print_res(res):
         return ans_list
     else:
         return ["not found :(\nPlease paraphrase your query"]
+
+
+def replace_name(string):
+    return re.sub(r'<@\w*>', '<b>ods_help_bot</b>', string)
 
 
 def get_doc_title(doc_text):
