@@ -137,7 +137,8 @@ def build_index():
         es.indices.delete(index="some-index", ignore=[400, 404])
     doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
-    data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
+    # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
+    data = pd.read_csv(f'{doc_dir}/ods_answers.csv')
     meetings_cols = [x for x in data['channel'].values if x.startswith('_meetings')]
     excluded_channels = ['random_b', 'bimorf', 'topkek'] + meetings_cols
     init_shape = data.shape[0]
@@ -149,18 +150,19 @@ def build_index():
     print('dropped:', init_shape - new_shape)
     success_count = 0
     doc_id = 0
+    data = data.dropna(subset=['answer_text'])
 
     for doc_id, doc_row in data.iterrows():
         client_msg_id = doc_row['client_msg_id']
         channel = doc_row['channel']
         text = doc_row['text']
         doc_links = find_urls(text)
-
+        show_text = doc_row['answer_text']
         doc = {
             "doc_id": client_msg_id,
             "doc_title": channel,
             "text": text,
-            "show_text": text[:MAX_TEXT_LEN],
+            "show_text": show_text[:MAX_TEXT_LEN],
             "link": doc_links
         }
 

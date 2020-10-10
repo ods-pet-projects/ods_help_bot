@@ -129,7 +129,8 @@ class BertIndexer:
 
 def prepare_indexer():
     indexer = BertIndexer()
-    df = pd.read_csv(f'{DATA}/channels_posts.csv')
+    df = pd.read_csv(f'{DATA}/ods_answers.csv')
+    # df = pd.read_csv(f'{DATA}/channels_posts.csv')
     data = df['text']
     indexer.create_index('bert_index', data.values)
     return indexer, df
@@ -156,7 +157,8 @@ def check_indexer():
 
 
 def get_text_by_ind(ind):
-    ans = df.loc[ind, 'text']
+    # ans = df.loc[ind, 'text']
+    ans = df.loc[ind, 'answer_text']
     return ans
 
 

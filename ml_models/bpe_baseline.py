@@ -33,12 +33,12 @@ def get_embedding(sentence):
 
 
 def load_data():
-    df = pd.read_csv(f'{DATA}/channels_posts.csv')
+    # df = pd.read_csv(f'{DATA}/channels_posts.csv')
+    df = pd.read_csv(f'{DATA}/ods_answers.csv')
     df['emb'] = df['text'].map(get_embedding)
     return df
 
 
-@lru_cache
 def get_answer(request):
     request_embedding = get_embedding(request)
     data["distance"] = data["emb"].apply(lambda x: sum(x * request_embedding))
