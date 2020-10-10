@@ -12,7 +12,7 @@ sys.path.append('..')
 from config import DATA
 
 MAX_ANSWER_COUNT = 3
-MAX_TEXT_LEN = 300
+MAX_TEXT_LEN = 600
 es = Elasticsearch()
 
 
@@ -97,7 +97,8 @@ def print_res(res):
             doc_title = item['_source']['doc_title']
             doc_preview_text = replace_name(item['_source']["show_text"])
             doc_preview_text = doc_preview_text[: MAX_TEXT_LEN] + '...'
-            ans_line = "\n".join([f"Answer from channel <b>{doc_title}:</b>", '______________________', doc_preview_text])
+            ans_line = "\n".join([f"<b>{doc_title}:</b>",
+                                  '______________________', doc_preview_text])
             if ans_line not in ans_list:
                 ans_list.append(ans_line)
 
@@ -107,7 +108,7 @@ def print_res(res):
 
 
 def replace_name(string):
-    return re.sub(r'<@\w*>', '<b>ods_help_bot</b>', string)
+    return re.sub(r'<@\w*>', '<b>ods_help_bot</b>', string).replace('<http', 'http')
 
 
 def get_doc_title(doc_text):
@@ -135,11 +136,21 @@ def build_index():
     if es.indices.exists(index="some-index"):
         es.indices.delete(index="some-index", ignore=[400, 404])
     doc_dir = DATA
+    # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
+    meetings_cols = [x for x in data['channel'].values if x.startswith('_meetings')]
+    excluded_channels = ['random_b', 'bimorf', 'topkek'] + meetings_cols
+    init_shape = data.shape[0]
+    data = data.query('channel not in @excluded_channels')
+    new_shape = data.shape[0]
+    print('filtered channels', excluded_channels)
+    print('pref shape:', init_shape)
+    print('new shape:', new_shape)
+    print('dropped:', init_shape - new_shape)
     success_count = 0
     doc_id = 0
 
-    for doc_id, doc_row in data.head(500).iterrows():
+    for doc_id, doc_row in data.iterrows():
         client_msg_id = doc_row['client_msg_id']
         channel = doc_row['channel']
         text = doc_row['text']
