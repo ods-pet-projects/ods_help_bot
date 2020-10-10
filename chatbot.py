@@ -5,7 +5,7 @@ from functools import partial
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
-from ml_models.elastic_search_baseline import msg_to_doc, add_doc_to_index, MAX_ANSWER_COUNT
+from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
 import support_model
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
@@ -23,9 +23,7 @@ Commands:
 /elastic \- `elasticsearch` ranking
 /bert \- `bert` embedding ranking
 /bpe \- `bpe` embedding ranking
-/tfidf \- `tfidf` classification model
 /info \- show this info message
-/addquestion \- add question and answer to improve bot
 /history \- show all user queries
 """,
     'assessment_thanks': 'Thank you for your estimation :)',
@@ -141,25 +139,6 @@ def reply(update, context):
     )
 
 
-def add_question(update, context):
-    input_msg = update.message.text.replace('/addquestion ', '').replace('/addquestion', '')
-    if input_msg == '':
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text=replies['question_add_info'])
-    else:
-        logger.info('addquestion msg %s @%s', input_msg, update.message.chat.username)
-        doc_list = msg_to_doc(input_msg)
-        if doc_list:
-            for doc in doc_list:
-                add_doc_to_index(doc)
-                context.bot.send_message(chat_id=update.effective_chat.id,
-                                         text=str(doc) + '\n' + replies['question_added'])
-                logger.info('addquestion add %s @%s', doc, update.message.chat.username)
-        else:
-            context.bot.send_message(chat_id=update.effective_chat.id,
-                                     text=replies['question_add_failed'])
-
-
 def next_button(update, context):
     query = update.callback_query
     query.answer()
@@ -237,7 +216,6 @@ def main():
         dispatcher.add_handler(CommandHandler(model_name, partial(set_model, model_name=model_name)))
     dispatcher.add_handler(CommandHandler('showmodel', show_model))
     dispatcher.add_handler(CommandHandler('history', show_history))
-    dispatcher.add_handler(CommandHandler('addquestion', add_question))
     dispatcher.add_handler(CallbackQueryHandler(next_button, pattern="Next"))
     dispatcher.add_handler(CallbackQueryHandler(assessment_button, pattern="Good"))
     dispatcher.add_handler(CallbackQueryHandler(assessment_button, pattern="Bad"))

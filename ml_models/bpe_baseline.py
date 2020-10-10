@@ -6,36 +6,35 @@ from functools import lru_cache
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from bpemb import BPEmb
+import os
+import re
 from config import DATA
+from text_utils.utils import replace_name, prepare_ans
 
-# bpe = BPEmb(lang="en", dim=300)
 bpe = BPEmb(lang="multi", vs=1000000, dim=300)
 
+MAX_TEXT_LEN = 600
 
-# def get_embedding(sentence):
-#     emb_av = np.array([t / np.linalg.norm(t) for t in bpe.embed(sentence)]).mean(axis=0)
-#     emb_av = emb_av / np.linalg.norm(emb_av)
-#     return emb_av
 
 def get_embedding(sentence):
     mean_emb = bpe.embed(sentence).mean(axis=0)
     return mean_emb / np.linalg.norm(mean_emb)
 
 
-# def get_text_embedding(sentence):
-#     word_embs = [get_embedding(w) for w in sentence]
-#     word_embs_normed = np.array([t / np.linalg.norm(t) for t in word_embs])
-#     emb_av = word_embs_normed.mean(axis=0)
-#     emb_av = emb_av / np.linalg.norm(emb_av)
-#     return emb_av
-
-
 def load_data():
     # df = pd.read_csv(f'{DATA}/channels_posts.csv')
-    df = pd.read_csv(f'{DATA}/ods_answers.csv')
-    df['emb'] = df['text'].map(get_embedding)
+    ifile_path = f'{DATA}/ods_answers.csv'
+    cache_file_path = f'{DATA}/ods_answers_bpe_cache.csv'
+
+    if os.path.exists(cache_file_path):
+        df = pd.read_csv(cache_file_path)
+        df['emb'] = df['emb'].apply(lambda x: np.array(eval(re.sub(' +', ', ', x).replace('[,', '['))))
+        df = df.sort_values('pos_score', ascending=False)
+    else:
+        df = pd.read_csv(ifile_path)
+        df['emb'] = df['text'].apply(get_embedding)
+        df.to_csv(cache_file_path, index=False)
     return df
 
 
@@ -43,7 +42,11 @@ def get_answer(request):
     request_embedding = get_embedding(request)
     data["distance"] = data["emb"].apply(lambda x: sum(x * request_embedding))
     data.sort_values("distance", ascending=False, inplace=True)
-    return data.head(4)['text'].str.slice(0, 300).values
+    data_ans = data.head(4)
+    ans_values = data_ans.apply(
+                lambda row: prepare_ans(row['channel'], row['text'], row['answer_text'], MAX_TEXT_LEN
+    ), axis=1).values
+    return ans_values
 
 
 data = load_data()
@@ -54,10 +57,13 @@ def main():
                  'как стать kaggle grandmaster?',
                  'Что такое BERT?',
                  'что такое random_b?',
-                    '''Привет! Хочу найти синонимы для слова в контексте (2-3 слова). 
-                    я не верю что для такой задачи нужен трансформер, как BERT или RoBERTa. 
-                    Что думаете? Каким было бы ваше решение в лоб?''',
-                 'Подскажите, пожалуйста, с чего начать изучение NLP? Можете посоветовать какие-нибудь курсы?'
+                 '''Привет! Хочу найти синонимы для слова в контексте (2-3 слова). 
+                 я не верю что для такой задачи нужен трансформер, как BERT или RoBERTa. 
+                 Что думаете? Каким было бы ваше решение в лоб?''',
+                 'Подскажите, пожалуйста, с чего начать изучение NLP? Можете посоветовать какие-нибудь курсы?',
+                 'рекомендательные системы',
+                 'где почитать про метрики?',
+                 'где найти информацию про многоруких бандитов?'
                  ]
 
     for question in questions:

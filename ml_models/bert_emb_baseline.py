@@ -7,8 +7,10 @@ import torch
 from tqdm import tqdm
 from pytorch_pretrained_bert import BertModel, BertTokenizer
 from config import DATA
+from text_utils.utils import prepare_ans
 
 FEATURE_SIZE = 768
+MAX_TEXT_LEN = 300
 
 
 def singleton(cls):
@@ -130,9 +132,9 @@ class BertIndexer:
 def prepare_indexer():
     indexer = BertIndexer()
     df = pd.read_csv(f'{DATA}/ods_answers.csv')
-    # df = pd.read_csv(f'{DATA}/channels_posts.csv')
+    df = df.sort_values('pos_score', ascending=False)
     data = df['text']
-    indexer.create_index('bert_index', data.values)
+    indexer.create_index(f'{DATA}/bert_index', data.values)
     return indexer, df
 
 
@@ -157,9 +159,11 @@ def check_indexer():
 
 
 def get_text_by_ind(ind):
-    # ans = df.loc[ind, 'text']
-    ans = df.loc[ind, 'answer_text']
-    return ans
+    ans_row = df.iloc[ind]
+    channel = ans_row['channel']
+    text = ans_row['text']
+    ans_text = ans_row['answer_text']
+    return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
 
 
 def get_answer(query):
