@@ -8,13 +8,12 @@ Telegram bot trained on Open Data Science slack history
 - - `elasticsearch_baseline` - fuzzy search
 - - `bert_emb_baseline` - BERT embedding ranking model
 - - `bpe_baseline` - BPE embedding ranking model
-- - `tfidf` - TFIDF classification model
 - Run bot `python chatbot.py`
 - Available in telegram by address `@ods_help_bot`
 ## Features
 - answer question
-- estimate question
-- add new question with answer
+- show other relevant answer (top 4)
+- estimate question (Good, Bad)
 - show history
 
 ## Finite automaton
