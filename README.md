@@ -18,9 +18,11 @@ This project is a telegram bot trained on Open Data Science slack posts history
 - show history
 ## Running
 - You need your own telegram TOKEN from BotFather
-- `export TOKEN="somerandomtoken"`
+- You can run bot in `screen`
+- add token to system variables `export TOKEN="somerandomtoken"`
+- create virtual environment `python -m venv venv` (optionally)
 - `pip install -r requirements.txt`
-- installed` elasticsearch`
+- installed `elasticsearch` 
 - running `systemctl restart elasticsearch`
 - `python chatbot.py`
 ## Finite automaton
