@@ -33,8 +33,10 @@ class BertEmbedder:
 
     def __init__(self):
         # use self.model_file with a path instead of 'bert-base-uncased' if you have a custom pretrained model
-        self.model_file = 'bert-base-uncased'  # os.path.join(path, "bert-base-multilingual-cased.tar.gz")
-        self.vocab_file = 'bert-base-uncased'  # os.path.join(path, "data_bert-base-multilingual-cased-vocab.txt")
+        # self.model_file = 'bert-base-uncased'  # os.path.join(path, "bert-base-multilingual-cased.tar.gz")
+        # self.vocab_file = 'bert-base-uncased'  # os.path.join(path, "data_bert-base-multilingual-cased-vocab.txt")
+        self.model_file = 'bert-base-multilingual-uncased'
+        self.vocab_file = 'bert-base-multilingual-uncased'
         self.model = self.bert_model()
         self.tokenizer = self.bert_tokenizer()
         self.embedding_matrix = self.get_bert_embed_matrix()
