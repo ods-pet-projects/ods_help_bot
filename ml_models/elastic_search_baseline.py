@@ -89,7 +89,7 @@ def build_index():
     data = data.dropna(subset=['answer_text'])
 
     for doc_id, doc_row in data.iterrows():
-        client_msg_id = doc_row['client_msg_id']
+        client_msg_id = doc_row['new_ind']
         channel = doc_row['channel']
         text = doc_row['text']
         answer_text = doc_row['answer_text']
