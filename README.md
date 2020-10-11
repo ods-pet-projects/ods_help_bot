@@ -1,6 +1,7 @@
 # ods_help_bot
 ## About
-Telegram bot trained on Open Data Science slack history
+This project is a telegram bot trained on Open Data Science slack posts history
+## Structure
 - `chatbot.py` - telegram bot for messaging
 - `support_model.py` - question answering AI
 - `scripts/prepare_data.py` - dataset parsing
@@ -15,6 +16,12 @@ Telegram bot trained on Open Data Science slack history
 - show other relevant answer (top 4)
 - estimate question (Good, Bad)
 - show history
-
+## Running
+- You need your own telegram TOKEN from BotFather
+- `export TOKEN="somerandomtoken"`
+- `pip install -r requirements.txt`
+- installed` elasticsearch`
+- running `systemctl restart elasticsearch`
+- `python chatbot.py`
 ## Finite automaton
 ![](https://github.com/ods-pet-projects/ods_help_bot/blob/master/_chatbot_graph.png)

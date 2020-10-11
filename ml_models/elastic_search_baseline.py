@@ -141,9 +141,15 @@ def run_elastic_circle():
         print()
 
 
-def main():
-    # process_input_files()
+index_ready = False
+if not es.indices.exists(index="some-index"):
     build_index()
+    index_ready = True
+
+
+def main():
+    if not index_ready:
+        build_index()
     check_elastic_ans()
     run_elastic_circle()
 
