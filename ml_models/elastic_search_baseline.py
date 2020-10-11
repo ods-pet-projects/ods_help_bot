@@ -4,10 +4,10 @@ from elasticsearch import Elasticsearch
 import pandas as pd
 import sys
 import re
-from text_utils.utils import replace_name, prepare_ans
 
 sys.path.append('..')
 from config import DATA
+from text_utils.utils import prepare_ans
 
 MAX_ANSWER_COUNT = 4
 MAX_TEXT_LEN = 600
