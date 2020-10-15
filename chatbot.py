@@ -23,6 +23,7 @@ Commands:
 /elastic \- `elasticsearch` ranking
 /bert \- `bert` embedding ranking
 /bpe \- `bpe` embedding ranking
+/use \- `sentence transformer` embedding ranking
 /info \- show this info message
 /history \- show all user queries
 """,
