@@ -6,7 +6,7 @@ import os
 
 test_mode = not os.environ.get('TOKEN')
 if test_mode:
-    elastic_search_baseline, bert_emb_baseline, bpe_baseline = 1, 2, 3
+    elastic_search_baseline, bert_emb_baseline, bpe_baseline, sentence_transformer_baseline = 1, 2, 3, 4
 else:
     from ml_models import elastic_search_baseline, bert_emb_baseline, bpe_baseline, sentence_transformer_baseline
 
