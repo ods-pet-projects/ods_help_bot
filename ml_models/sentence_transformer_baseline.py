@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import nmslib
 import numpy as np
-import torch
 from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
 from config import DATA
