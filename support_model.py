@@ -6,15 +6,16 @@ import os
 
 test_mode = not os.environ.get('TOKEN')
 if test_mode:
-    elastic_search_baseline, bert_emb_baseline, bpe_baseline = 1, 2, 3
+    elastic_search_baseline, bert_emb_baseline, bpe_baseline, sentence_transformer_baseline = 1, 2, 3, 4
 else:
-    from ml_models import elastic_search_baseline, bert_emb_baseline, bpe_baseline
+    from ml_models import elastic_search_baseline, bert_emb_baseline, bpe_baseline, sentence_transformer_baseline
 
 
 class ModelNames(enum.Enum):
     ELASTIC = 'elastic'
     BERT = 'bert'
     BPE = 'bpe'
+    USE = 'use'
 
 
 # default model
@@ -47,6 +48,8 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
             answer_list = bert_emb_baseline.get_answer(query)
         if model_name == ModelNames.BPE:
             answer_list = bpe_baseline.get_answer(query)
+        if model_name == ModelNames.USE:
+            answer_list = sentence_transformer_baseline.get_answer(query)
         return answer_list
     except Exception as ex:
         print(ex)
