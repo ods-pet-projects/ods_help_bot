@@ -15,7 +15,7 @@ class ModelNames(enum.Enum):
     ELASTIC = 'elastic'
     BERT = 'bert'
     BPE = 'bpe'
-    ST = 'use'
+    USE = 'use'
 
 
 # default model
@@ -48,7 +48,7 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
             answer_list = bert_emb_baseline.get_answer(query)
         if model_name == ModelNames.BPE:
             answer_list = bpe_baseline.get_answer(query)
-        if model_name == ModelNames.ST:
+        if model_name == ModelNames.USE:
             answer_list = sentence_transformer_baseline.get_answer(query)
         return answer_list
     except Exception as ex:
