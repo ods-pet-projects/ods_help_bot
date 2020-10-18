@@ -9,6 +9,7 @@ This project is a telegram bot trained on Open Data Science slack posts history
 - - `elasticsearch_baseline` - fuzzy search
 - - `bert_emb_baseline` - BERT embedding ranking model
 - - `bpe_baseline` - BPE embedding ranking model
+- - `use_baseline` - USE embedding rankinig model
 - Run bot `python chatbot.py`
 - Available in telegram by address `@ods_help_bot`
 ## Features
