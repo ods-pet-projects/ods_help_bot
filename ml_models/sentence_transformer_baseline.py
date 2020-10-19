@@ -5,7 +5,7 @@ import nmslib
 import numpy as np
 from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
-from config import DATA
+from config import DATA, ifile_train_path
 from text_utils.utils import prepare_ans
 
 FEATURE_SIZE = 512
@@ -109,7 +109,7 @@ class STIndexer:
 
 def prepare_indexer():
     indexer = STIndexer()
-    df = pd.read_csv(f'{DATA}/ods_answers.csv')
+    df = pd.read_csv(ifile_train_path)
     df = df.sort_values('pos_score', ascending=False)
     data = df['text']
     indexer.create_index(f'{DATA}/st_bert_index', data.values)

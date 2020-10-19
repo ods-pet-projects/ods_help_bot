@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from pytorch_pretrained_bert import BertModel, BertTokenizer
-from config import DATA
+from config import DATA, ifile_train_path
 from text_utils.utils import prepare_ans
 
 FEATURE_SIZE = 768
@@ -133,7 +133,7 @@ class BertIndexer:
 
 def prepare_indexer():
     indexer = BertIndexer()
-    df = pd.read_csv(f'{DATA}/ods_answers.csv')
+    df = pd.read_csv(ifile_train_path)
     df = df.sort_values('pos_score', ascending=False)
     data = df['text']
     indexer.create_index(f'{DATA}/bert_index', data.values)

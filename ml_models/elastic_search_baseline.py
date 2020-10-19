@@ -6,7 +6,7 @@ import sys
 import re
 
 sys.path.append('..')
-from config import DATA
+from config import DATA, ifile_train_path
 from text_utils.utils import prepare_ans
 
 MAX_ANSWER_COUNT = 4
@@ -75,7 +75,7 @@ def build_index():
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
     # data = pd.read_csv(f'{doc_dir}/ods_answers.csv')
-    data = pd.read_csv(f'{doc_dir}/ods_answers_eval.csv')
+    data = pd.read_csv(ifile_train_path)
     meetings_cols = [x for x in data['channel'].values if x.startswith('_meetings')]
     excluded_channels = ['random_b', 'bimorf', 'topkek', 'random_b'] + meetings_cols
     init_shape = data.shape[0]
