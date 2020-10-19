@@ -74,7 +74,8 @@ def build_index():
     doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
-    data = pd.read_csv(f'{doc_dir}/ods_answers.csv')
+    # data = pd.read_csv(f'{doc_dir}/ods_answers.csv')
+    data = pd.read_csv(f'{doc_dir}/ods_answers_eval.csv')
     meetings_cols = [x for x in data['channel'].values if x.startswith('_meetings')]
     excluded_channels = ['random_b', 'bimorf', 'topkek', 'random_b'] + meetings_cols
     init_shape = data.shape[0]
