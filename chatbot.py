@@ -7,6 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Pickl
 
 from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
 import support_model
+from scripts import smalltalk
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
 
@@ -115,7 +116,13 @@ def reply(update, context):
     else:
         context.user_data['history'].append(query)
 
-    ans_list = support_model.get_answer(query, model_name=model_name)
+    ans_first = smalltalk.get_answer(query)
+    ans_list = [ans_first]
+
+    if not ans_first:
+        ans_list = support_model.get_answer(query, model_name=model_name)
+        ans_first = ans_list[0]
+
     context.user_data['last_answers'] = ans_list
     context.user_data['assessment_has_set'] = False
     context.user_data['curr_ans'] = 0
@@ -125,7 +132,8 @@ def reply(update, context):
     logger.info('reply msg to user: @%s', update.message.chat.username)
 
     reply_markup = None
-    if ans_list[0] != replies['not_found_msg']:
+
+    if ans_first != replies['not_found_msg']:
         keyboard = [
             [InlineKeyboardButton("Next", callback_data='Next')],
             [InlineKeyboardButton("Good", callback_data='Good'), InlineKeyboardButton("Bad", callback_data='Bad')],
@@ -134,7 +142,7 @@ def reply(update, context):
 
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=ans_list[0],
+        text=ans_first,
         parse_mode=ParseMode.HTML,
         reply_markup=reply_markup
     )
@@ -149,7 +157,6 @@ def next_button(update, context):
         parse_mode=ParseMode.HTML,
     )
 
-    context.user_data['curr_ans'] += 1
     text = context.user_data['last_answers'][context.user_data['curr_ans']]
     keyboard = [
         [InlineKeyboardButton("Next", callback_data='Next')],
@@ -162,7 +169,6 @@ def next_button(update, context):
 
     logger.info('reply msg answer: `%s` to user: @%s', text, update.effective_chat.username)
     logger.info('reply assessment from user: @%s %s', update.effective_chat.username, query.data)
-
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=text,
@@ -170,6 +176,7 @@ def next_button(update, context):
         reply_markup=reply_markup
     )
     logger.info('reply assessment from user: @%s %s', update.effective_chat.username, query.data)
+    context.user_data['curr_ans'] += 1
 
 
 def assessment_button(update, context):
@@ -177,14 +184,18 @@ def assessment_button(update, context):
     query.answer()
 
     reply_markup = None
-    if context.user_data['curr_ans'] != MAX_ANSWER_COUNT and context.user_data['curr_ans'] != len(context.user_data['last_answers']) - 1:
+    cur_ans_ind = context.user_data['curr_ans']
+    if cur_ans_ind != MAX_ANSWER_COUNT and cur_ans_ind != len(context.user_data['last_answers']) - 1:
         keyboard = [
             [InlineKeyboardButton("Next", callback_data='Next')],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
+    last_text = context.user_data['last_answers'][cur_ans_ind] \
+                        if len(context.user_data['last_answers']) > cur_ans_ind else context.user_data['last_answers'][-1]
+
     query.edit_message_text(
-        text=context.user_data['last_answers'][context.user_data['curr_ans']],
+        text=last_text,
         parse_mode=ParseMode.HTML,
         reply_markup=reply_markup
     )
