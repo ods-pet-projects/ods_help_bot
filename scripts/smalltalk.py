@@ -15,6 +15,8 @@ REPLIES_DICT = json.load(open(f'{DATA}/dialog_data.json'))
 
 total_stats = {'intent': 0, 'generative': 0, 'failure': 0}
 DIALOGS_DATA_PATH = f'{DATA}/chats.txt'
+# PROBA_THRESHOLD = 0.09
+PROBA_THRESHOLD = 0.7
 
 
 def fit_intent_models():
@@ -43,7 +45,8 @@ def get_intent(clf, clf_proba, vectorizer, question):
     probabilities = clf_proba.predict_proba(vectorizer.transform([question]))[0]
 
     best_intent_proba = probabilities[index_of_best_intent]
-    if best_intent_proba > 0.09:
+    print('\t\t', question, best_intent, best_intent_proba)
+    if best_intent_proba > PROBA_THRESHOLD:
         return best_intent
 
 
@@ -142,10 +145,13 @@ def check_bot():
                     'как дела?',
                     'Привет! как дела?',
                     'Доброй ночи!!',
-                    'Как тебя зовут?']
+                    'Как тебя зовут?',
+                    'как стать kaggle грандмастером?'
+                    ]
 
     for q in test_queries:
-        print(q, get_full_small_talk_answer(q))
+        # print(q, get_full_small_talk_answer(q))
+        print(q, get_answer(q))
 
 
 def get_answer(question):
