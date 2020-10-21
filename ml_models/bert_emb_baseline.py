@@ -140,7 +140,6 @@ def prepare_indexer():
     df['text_len'] = df['text'].str.len()
     logger.info('init shape: %s', df.shape)
     logger.info('text_len > 768 %s', sum(df['text_len'] > 768))
-    df = df.head(100)
     df['text'] = "[CLS] " + df['text'] + " [SEP]"
     df['text'] = df['text'].str.slice(0, FEATURE_SIZE)
     indexer.create_index(index_file_path, df['text'].values)
