@@ -110,9 +110,6 @@ class BertIndexer:
         self.data = data
         print('elapsed:', pd.Timestamp.now() - start)
 
-    def create_embedding(self, text):
-        return self.model.sentence_embedding(text).numpy()
-
     def make_data_embeddings(self, data):
         names_sparse_matrix = []
         for i in tqdm(range(len(data))):
@@ -124,7 +121,7 @@ class BertIndexer:
 
     def return_closest(self, text, k=2, num_threads=2):
         if self.index_is_loaded:
-            r = self.model.sentence_embedding(text).numpy()
+            r = self.model.sentence_embedding(text)
             near_neighbors = self.index.knnQueryBatch(queries=[r], k=k, num_threads=num_threads)
             return [(self.data[i], i) for i in near_neighbors[0][0]]
         else:
@@ -132,6 +129,8 @@ class BertIndexer:
 
 
 def prepare_indexer():
+    # index_file_path = f'{DATA}/bert_index'
+    index_file_path = f'{DATA}/bert_index_100K'
     indexer = BertIndexer()
     df = pd.read_csv(ifile_train_path)
     df = df.sort_values('pos_score', ascending=False)
@@ -155,7 +154,7 @@ def check_indexer():
         print('____', q)
         ans_list = get_answer(q)
         for ans in ans_list:
-            print('\t\t', ans)
+            print('\t\t', ans.replace('\n', ''))
         print()
         print()
 
