@@ -13,7 +13,18 @@ from text_utils.utils import prepare_ans, create_logger
 FEATURE_SIZE = 768
 MAX_TEXT_LEN = 300
 
+prefix = "[CLS] "
+postfix = " [SEP]"
+
 logger = create_logger(__name__, f'{LOG_DIR}/bert_emb_baseline.log')
+
+
+def prepare_query(text):
+    text = text.lower()
+    max_len = FEATURE_SIZE - len(prefix) - len(postfix)
+    text = text[0: max_len]
+    return f'{prefix}{text}{postfix}'
+
 
 def singleton(cls):
     instance = None
@@ -124,8 +135,8 @@ class BertIndexer:
         return names_sparse_matrix
 
     def return_closest(self, text, k=2, num_threads=2):
-        df['text'] = df['text'].str.slice(0, FEATURE_SIZE)
-        text = "[CLS] " + text + " [SEP]"
+
+
         if self.index_is_loaded:
             r = self.model.sentence_embedding(text)
             near_neighbors = self.index.knnQueryBatch(queries=[r], k=k, num_threads=num_threads)
@@ -142,9 +153,8 @@ def prepare_indexer():
     df['text_len'] = df['text'].str.len()
     logger.info('init shape: %s', df.shape)
     logger.info('text_len > 768 %s', sum(df['text_len'] > 768))
-    df['text'] = df['text'].str.slice(0, FEATURE_SIZE)
-    df['text'] = "[CLS] " + df['text'] + " [SEP]"
-    indexer.create_index(index_file_path, df['text'].values)
+    df['text_bert'] = df['text'].apply(prepare_query)
+    indexer.create_index(index_file_path, df['text_bert'].values)
     return indexer, df
 
 

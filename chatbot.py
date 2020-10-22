@@ -5,13 +5,13 @@ from functools import partial
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
-from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
 import support_model
 from text_utils.utils import create_logger
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
 
 TOKEN = os.environ.get('TOKEN')
+MAX_ANSWER_COUNT = 4
 
 replies = {
     'start': "Please send me query and I'll answer! Send /info to view all commands",
