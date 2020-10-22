@@ -4,6 +4,10 @@ import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 from text_utils.utils import prepare_ans
+from config import ifile_train_path, index_path
+
+MAX_TEXT_LEN = 300
+df = pd.read_csv(ifile_train_path)
 
 class UniIndexer:
     def __init__(self, model_name, logger):
@@ -13,6 +17,9 @@ class UniIndexer:
         elif model_name == 'use':
             from ml_models.use_model import STEmbedder
             self.model = STEmbedder()
+        else:
+            raise ValueError(f'Model {model_name} not found.')
+        self.model_name = model_name
         self.space_type = 'cosinesimil'
         self.method_name = 'hnsw'
         self.index = nmslib.init(space=self.space_type,
@@ -32,13 +39,13 @@ class UniIndexer:
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
         if not os.path.exists(index_path):
-            self.logger.info(f'train {model_name} indexer started')
+            self.logger.info(f'train {self.model_name} indexer started')
             names_sparse_matrix = self.make_data_embeddings(data)
             self.index.addDataPointBatch(data=names_sparse_matrix)
             self.index.createIndex(print_progress=True)
             self.index.saveIndex(index_path, save_data=True)
         else:
-            self.logger.info(f'found prepared {model_name} index, loading...')
+            self.logger.info(f'found prepared {self.model_name} index, loading...')
             self.load_index(index_path, data)
             self.logger.info('loaded from %s', index_path)
         self.index_is_loaded = True
@@ -61,3 +68,15 @@ class UniIndexer:
             return [(self.data[i], i) for i in near_neighbors[0][0]]
         else:
             raise IndexError("Index is not yet created or loaded")
+
+def prepare_indexer(model_name, logger):
+    indexer = UniIndexer(model_name, logger)
+    indexer.create_index(index_path[model_name], df['text'].values)
+    return indexer, df
+
+def get_text_by_ind(ind):
+    ans_row = df.iloc[ind]
+    channel = ans_row['channel']
+    text = ans_row['text']
+    ans_text = ans_row['answer_text']
+    return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
