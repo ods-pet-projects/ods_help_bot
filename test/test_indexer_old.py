@@ -6,7 +6,7 @@ questions = ['Существуют ли в открытом доступе ко�
 class TestIndexer(unittest.TestCase):
 
     def test_bert_indexer(self):
-        from ml_models.bert_emb_baseline import indexer
+        from models_prev.bert_emb_baseline import indexer
         for q in questions:
             text = "[CLS] " + q + " [SEP]" # to replace with prepare_text method
             r = indexer.model.sentence_embedding(text)
@@ -18,7 +18,7 @@ class TestIndexer(unittest.TestCase):
 
 
     def test_use_indexer(self):
-        from ml_models.sentence_transformer_baseline import indexer
+        from models_prev.sentence_transformer_baseline import indexer
         for q in questions:
             r = indexer.model.sentence_embedding(q)
             self.assertTrue(r.shape[0]==768) # embedding dimension
