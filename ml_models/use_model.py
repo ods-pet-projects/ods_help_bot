@@ -29,6 +29,7 @@ class STEmbedder:
     def __init__(self):
         self.model_file = 'distilbert-multilingual-nli-stsb-quora-ranking'
         self.model = self.bert_model()
+        self.success_count = 0
         self.error_count = 0
 
     @singleton
