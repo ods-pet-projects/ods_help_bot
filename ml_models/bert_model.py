@@ -4,6 +4,7 @@ import numpy as np
 from text_utils.indexer import *
 from text_utils.utils import create_logger
 from config import logger_path
+import torch
 
 logger = create_logger(__name__, logger_path['bert'])
 

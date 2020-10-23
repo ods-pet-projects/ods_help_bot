@@ -40,6 +40,7 @@ class STEmbedder:
     def sentence_embedding(self, text):
         try:
             sent_embedding = self.model.encode(text)
+            self.success_count += 1
             return sent_embedding
         except:
             self.error_count += 1
