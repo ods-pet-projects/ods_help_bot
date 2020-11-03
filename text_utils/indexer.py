@@ -17,6 +17,9 @@ class UniIndexer:
         elif model_name == 'use':
             from ml_models.use_model import STEmbedder
             self.model = STEmbedder()
+        elif model_name == 'bpe':
+            from ml_models.bpe_model import BPEEmbedder
+            self.model = BPEEmbedder()
         else:
             raise ValueError(f'Model {model_name} not found.')
         self.model_name = model_name

@@ -6,9 +6,9 @@ import os
 
 test_mode = not os.environ.get('TOKEN')
 if test_mode:
-    elastic_search_baseline, bert_model, bpe_baseline, use_model = 1, 2, 3, 4
+    elastic_search_baseline, bert_model, bpe_model, use_model = 1, 2, 3, 4
 else:
-    from ml_models import elastic_search_baseline, bert_model, bpe_baseline, use_model
+    from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
 
 
 class ModelNames(enum.Enum):
@@ -47,7 +47,7 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
         if model_name == ModelNames.BERT:
             answer_list = bert_model.get_answer(query)
         if model_name == ModelNames.BPE:
-            answer_list = bpe_baseline.get_answer(query)
+            answer_list = bpe_model.get_answer(query)
         if model_name == ModelNames.USE:
             answer_list = use_model.get_answer(query)
         return answer_list
