@@ -4,11 +4,9 @@ from text_utils.indexer import *
 from text_utils.utils import create_logger
 from config import logger_path
 from bpemb import BPEmb
-import torch
 
 logger = create_logger(__name__, logger_path['bpe'])
 
-MAX_TEXT_LEN = 600
 FEATURE_SIZE = 300
 
 def singleton(cls):
@@ -67,7 +65,7 @@ def get_answer(query):
     ans_list = [get_text_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ans_list
 
-logger.info('bert indexer started')
+logger.info('bpe indexer started')
 indexer, df = prepare_indexer('bpe', logger)
-logger.info('bert indexer ready')
+logger.info('bpe indexer ready')
 check_indexer()
