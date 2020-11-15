@@ -4,18 +4,17 @@ import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 from utils.base_classes import BaseIndexer
-from support_model import ModelNames
 from config import INDEX_DIR, index_path
 
 class NMSlibIndexer(BaseIndexer):
     def __init__(self, model_name, logger):
-        if model_name == ModelNames.BERT:
+        if model_name == 'bert':
             from ml_models.bert_model import BertEmbedder
             self.model = BertEmbedder()
-        elif model_name == ModelNames.USE:
+        elif model_name == 'use':
             from ml_models.use_model import STEmbedder
             self.model = STEmbedder()
-        elif model_name == ModelNames.BPE:
+        elif model_name == 'bpe':
             from ml_models.bpe_model import BPEEmbedder
             self.model = BPEEmbedder()
         else:
