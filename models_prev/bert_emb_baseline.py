@@ -5,13 +5,15 @@ import nmslib
 import numpy as np
 import torch
 from tqdm import tqdm
+tqdm.pandas()
 from pytorch_pretrained_bert import BertModel, BertTokenizer
-from config import DATA
-from text_utils.utils import prepare_ans
+from config import DATA, ifile_train_path, LOG_DIR
+from text_utils.utils import prepare_ans, create_logger
 
 FEATURE_SIZE = 768
 MAX_TEXT_LEN = 300
 
+logger = create_logger(__name__, f'{LOG_DIR}/bert_emb_baseline.log')
 
 def singleton(cls):
     instance = None
@@ -41,6 +43,8 @@ class BertEmbedder:
         self.tokenizer = self.bert_tokenizer()
         self.embedding_matrix = self.get_bert_embed_matrix()
         self.FEATURE_SIZE = FEATURE_SIZE
+        self.success_count = 0
+        self.error_count = 0
 
     @singleton
     def bert_model(self):
@@ -60,22 +64,19 @@ class BertEmbedder:
         return matrix
 
     def sentence_embedding(self, text):
-        token_list = self.tokenizer.tokenize("[CLS] " + text + " [SEP]")
-        segments_ids, indexed_tokens = [1] * len(token_list), self.tokenizer.convert_tokens_to_ids(token_list)
-        segments_tensors, tokens_tensor = torch.tensor([segments_ids]), torch.tensor([indexed_tokens])
-        with torch.no_grad():
-            encoded_layers, _ = self.model(tokens_tensor, segments_tensors)
-        sent_embedding = torch.mean(encoded_layers[11], 1)
-        return sent_embedding
-
-    def encode(self, data):
-        names_sparse_matrix = []
-        for i in tqdm(range(len(data))):
-            try:
-                names_sparse_matrix.append(self.sentence_embedding(data[i])[0].numpy())
-            except:
-                names_sparse_matrix.append(np.zeros(self.FEATURE_SIZE))
-        return names_sparse_matrix
+        try:
+            token_list = self.tokenizer.tokenize(text)
+            segments_ids, indexed_tokens = [1] * len(token_list), self.tokenizer.convert_tokens_to_ids(token_list)
+            segments_tensors, tokens_tensor = torch.tensor([segments_ids]), torch.tensor([indexed_tokens])
+            with torch.no_grad():
+                encoded_layers, _ = self.model(tokens_tensor, segments_tensors)
+            sent_embedding = torch.mean(encoded_layers[11], 1)
+            vect = sent_embedding[0].numpy()
+            self.success_count += 1
+            return vect
+        except:
+            self.error_count += 1
+        return np.zeros(FEATURE_SIZE)
 
 
 class BertIndexer:
@@ -99,32 +100,34 @@ class BertIndexer:
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
         if not os.path.exists(index_path):
+            logger.info('train bert indexer started')
             names_sparse_matrix = self.make_data_embeddings(data)
             self.index.addDataPointBatch(data=names_sparse_matrix)
             self.index.createIndex(print_progress=True)
             self.index.saveIndex(index_path, save_data=True)
         else:
+            logger.info('found prepared bert index, loading...')
             self.load_index(index_path, data)
-            print('loaded from', index_path)
+            logger.info('loaded from %s', index_path)
         self.index_is_loaded = True
         self.data = data
-        print('elapsed:', pd.Timestamp.now() - start)
-
-    def create_embedding(self, text):
-        return self.model.sentence_embedding(text).numpy()
+        logger.info('elapsed: %s', pd.Timestamp.now() - start)
 
     def make_data_embeddings(self, data):
+        # names_sparse_matrix = pd.DataFrame({'text': data})['text'].progress_apply(get_emb_vector, args=(self.model, ))
         names_sparse_matrix = []
-        for i in tqdm(range(len(data))):
-            try:
-                names_sparse_matrix.append(self.model.sentence_embedding(data[i])[0].numpy())
-            except:
-                names_sparse_matrix.append(np.zeros(FEATURE_SIZE))
+        for i, text_prepared in tqdm(enumerate(data)):
+            names_sparse_matrix.append(self.model.sentence_embedding(text_prepared))
+        logger.info('make embeddings finished')
+        logger.info('pos count %s', self.model.success_count)
+        logger.info('neg count %s', self.model.error_count)
         return names_sparse_matrix
 
     def return_closest(self, text, k=2, num_threads=2):
+        df['text'] = df['text'].str.slice(0, FEATURE_SIZE)
+        text = "[CLS] " + text + " [SEP]"
         if self.index_is_loaded:
-            r = self.model.sentence_embedding(text).numpy()
+            r = self.model.sentence_embedding(text)
             near_neighbors = self.index.knnQueryBatch(queries=[r], k=k, num_threads=num_threads)
             return [(self.data[i], i) for i in near_neighbors[0][0]]
         else:
@@ -132,11 +135,16 @@ class BertIndexer:
 
 
 def prepare_indexer():
+    # index_file_path = f'{DATA}/bert_index'
+    index_file_path = f'{DATA}/bert_index_100K'
     indexer = BertIndexer()
-    df = pd.read_csv(f'{DATA}/ods_answers.csv')
-    df = df.sort_values('pos_score', ascending=False)
-    data = df['text']
-    indexer.create_index(f'{DATA}/bert_index', data.values)
+    df = pd.read_csv(ifile_train_path)
+    df['text_len'] = df['text'].str.len()
+    logger.info('init shape: %s', df.shape)
+    logger.info('text_len > 768 %s', sum(df['text_len'] > 768))
+    df['text'] = df['text'].str.slice(0, FEATURE_SIZE)
+    df['text'] = "[CLS] " + df['text'] + " [SEP]"
+    indexer.create_index(index_file_path, df['text'].values)
     return indexer, df
 
 
@@ -155,7 +163,7 @@ def check_indexer():
         print('____', q)
         ans_list = get_answer(q)
         for ans in ans_list:
-            print('\t\t', ans)
+            print('\t\t', ans.replace('\n', ''))
         print()
         print()
 
@@ -173,7 +181,7 @@ def get_answer(query):
     return ans_list
 
 
-print('load/train bert indexer started')
+logger.info('bert indexer started')
 indexer, df = prepare_indexer()
-print('bert indexer ready')
+logger.info('bert indexer ready')
 check_indexer()

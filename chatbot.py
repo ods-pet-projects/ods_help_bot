@@ -7,6 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Pickl
 
 from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
 import support_model
+from text_utils.utils import create_logger
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
 
@@ -40,20 +41,7 @@ What about sentence2? thing2_title. thing2. https://link
     'not_found_msg': 'not found :(\nPlease paraphrase your query'
 }
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-c_handler = logging.StreamHandler()
-os.makedirs('logs', exist_ok=True)
-f_handler = logging.FileHandler('logs/chatbot.log')
-
-c_handler.setLevel(logging.DEBUG)
-f_handler.setLevel(logging.DEBUG)
-
-logger_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-c_handler.setFormatter(logger_format)
-f_handler.setFormatter(logger_format)
-logger.addHandler(c_handler)
-logger.addHandler(f_handler)
+logger = create_logger(__name__, 'logs/chatbot.log')
 
 logger.debug('Support chat bot started')
 

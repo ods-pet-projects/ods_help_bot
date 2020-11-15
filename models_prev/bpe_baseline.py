@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
 from functools import lru_cache
 
 import numpy as np
@@ -9,7 +8,7 @@ import pandas as pd
 from bpemb import BPEmb
 import os
 import re
-from config import DATA
+from config import DATA, ifile_train_path
 from text_utils.utils import replace_name, prepare_ans
 
 bpe = BPEmb(lang="multi", vs=1000000, dim=300)
@@ -24,7 +23,7 @@ def get_embedding(sentence):
 
 def load_data():
     # df = pd.read_csv(f'{DATA}/channels_posts.csv')
-    ifile_path = f'{DATA}/ods_answers.csv'
+    ifile_path = ifile_train_path
     cache_file_path = f'{DATA}/ods_answers_bpe_cache.csv'
 
     if os.path.exists(cache_file_path):
