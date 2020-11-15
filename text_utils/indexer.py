@@ -29,7 +29,6 @@ class UniIndexer:
                                  method=self.method_name,
                                  data_type=nmslib.DataType.DENSE_VECTOR,
                                  dtype=nmslib.DistType.FLOAT)
-        self.index_params = {'NN': 15}
         self.index_is_loaded = False
         self.data = []
         self.logger = logger
@@ -83,4 +82,3 @@ def get_text_by_ind(ind):
     text = ans_row['text']
     ans_text = ans_row['answer_text']
     return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
-    
