@@ -23,3 +23,9 @@ logger_path = {
     'bpe': f'{LOG_DIR}/bpe_model.log',
     # 'elastic': f'{LOG_DIR}/elastic_model.log'
 }
+
+indexer_map = {
+    'bert': 'nmslib',
+    'use': 'nmslib',
+    'bpe': 'nmslib'
+}

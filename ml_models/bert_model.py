@@ -2,7 +2,7 @@ from transformers import BertModel, BertTokenizer
 from functools import wraps
 import numpy as np
 from utils.base_classes import BaseEmbedder
-from indexers.nmslib_indexer import get_text_by_ind, prepare_indexer
+from utils.indexer_utils import get_text_by_ind, prepare_indexer, test_queries
 from text_utils.utils import create_logger
 from config import logger_path
 import torch
@@ -68,16 +68,6 @@ class BertEmbedder(BaseEmbedder):
 
 
 def check_indexer():
-    test_queries = ['Есть ли аналоги pandas (ну или не аналоги а тоже либы для работы с данными) для работы с данными',
-                    'Как стать kaggle grandmaster?',
-                    'Что такое BERT?',
-                    'что такое random_b?',
-                    '''Привет! Хочу найти синонимы для слова в контексте (2-3 слова). 
-                    я не верю что для такой задачи нужен трансформер, как BERT или RoBERTa. 
-                    Что думаете? Каким было бы ваше решение в лоб?''',
-                    'Подскажите, пожалуйста, с чего начать изучение NLP? Можете посоветовать какие-нибудь курсы?'
-                    ]
-
     for q in test_queries:
         print('____', q)
         ans_list = get_answer(q)
