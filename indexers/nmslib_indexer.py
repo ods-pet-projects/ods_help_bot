@@ -4,12 +4,13 @@ import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 from text_utils.utils import prepare_ans
+from utils.base_classes import BaseIndexer
 from config import ifile_train_path, INDEX_DIR, index_path
 
 MAX_TEXT_LEN = 300
 df = pd.read_csv(ifile_train_path)
 
-class UniIndexer:
+class UniIndexer(BaseIndexer):
     def __init__(self, model_name, logger):
         if model_name == 'bert':
             from ml_models.bert_model import BertEmbedder
@@ -38,6 +39,9 @@ class UniIndexer:
         self.index_is_loaded = True
         self.data = data
     
+    def save_index(self, index_path, save_data=True):
+        self.index.saveIndex(index_path, save_data)
+
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
         if not os.path.exists(INDEX_DIR):
@@ -47,7 +51,7 @@ class UniIndexer:
             names_sparse_matrix = self.make_data_embeddings(data)
             self.index.addDataPointBatch(data=names_sparse_matrix)
             self.index.createIndex(print_progress=True)
-            self.index.saveIndex(index_path, save_data=True)
+            self.save_index(index_path, save_data=True)
         else:
             self.logger.info(f'found prepared {self.model_name} index, loading...')
             self.load_index(index_path, data)
