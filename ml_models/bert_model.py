@@ -1,7 +1,7 @@
 from transformers import BertModel, BertTokenizer
 from functools import wraps
 import numpy as np
-from text_utils.indexer import get_text_by_ind, prepare_indexer
+from indexers.nmslib_indexer import get_text_by_ind, prepare_indexer
 from text_utils.utils import create_logger
 from config import logger_path
 import torch
