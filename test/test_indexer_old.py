@@ -9,8 +9,7 @@ class TestIndexer(unittest.TestCase):
         from models_prev.bert_emb_baseline import indexer
         for q in questions:
             text = "[CLS] " + q + " [SEP]" # to replace with prepare_text method
-            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
-            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
+            r = indexer.model.sentence_embedding(text)
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
             self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
@@ -21,7 +20,7 @@ class TestIndexer(unittest.TestCase):
         from models_prev.sentence_transformer_baseline import indexer
         for q in questions:
             r = indexer.model.sentence_embedding(q)
-            self.assertTrue(r.shape[0]==768) # embedding dimension
+            self.assertEqual(r.shape[0], 768) # embedding dimension
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
             self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
