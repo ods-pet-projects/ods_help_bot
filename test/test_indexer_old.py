@@ -9,12 +9,12 @@ class TestIndexer(unittest.TestCase):
         from models_prev.bert_emb_baseline import indexer
         for q in questions:
             text = "[CLS] " + q + " [SEP]" # to replace with prepare_text method
-            r = indexer.model.sentence_embedding(text)
-            self.assertTrue(r.shape[0]==768) # embedding dimension
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertTrue(len(res[0][0])==4) # return 4 neighbours
-            self.assertTrue(res[0][1][0]<1e-5) # find itself, distance apx. 0
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
 
 
     def test_use_indexer(self):
@@ -24,8 +24,8 @@ class TestIndexer(unittest.TestCase):
             self.assertTrue(r.shape[0]==768) # embedding dimension
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertTrue(len(res[0][0])==4) # return 4 neighbours
-            self.assertTrue(res[0][1][0]<1e-5) # find itself, distance apx. 0
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
 
     def test_bpe_indexer(self):
         pass

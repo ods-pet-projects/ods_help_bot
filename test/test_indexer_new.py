@@ -13,8 +13,8 @@ class TestIndexer(unittest.TestCase):
             self.assertTrue(r.shape[0]==768) # embedding dimension
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertTrue(len(res[0][0])==4) # return 4 neighbours
-            self.assertTrue(res[0][1][0]<1e-5) # find itself, distance apx. 0
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
 
 
     def test_use_indexer(self):
@@ -24,8 +24,8 @@ class TestIndexer(unittest.TestCase):
             self.assertTrue(r.shape[0]==768) # embedding dimension
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertTrue(len(res[0][0])==4) # return 4 neighbours
-            self.assertTrue(res[0][1][0]<1e-5) # find itself, distance apx. 0
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
 
     def test_bpe_indexer(self):
         from ml_models.bpe_model import indexer
@@ -34,8 +34,8 @@ class TestIndexer(unittest.TestCase):
             self.assertTrue(r.shape[0]==300) # embedding dimension
 
             res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertTrue(len(res[0][0])==4) # return 4 neighbours
-            self.assertTrue(res[0][1][0]<1e-5) # find itself, distance apx. 0
+            self.assertEqual(len(res[0][0]), 4) # return 4 neighbours
+            self.assertLess(res[0][1][0], 1e-5) # find itself, distance apx. 0
     
 def main():
     tester = TestIndexer()
@@ -45,4 +45,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
