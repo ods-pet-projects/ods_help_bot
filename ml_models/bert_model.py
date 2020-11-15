@@ -30,9 +30,8 @@ class BertEmbedder(BaseEmbedder):
     Embedding Wrapper on Bert Multilingual Uncased
     """
 
-    def __init__(self):
-        self.model_file = 'bert-base-multilingual-uncased'
-        self.vocab_file = 'bert-base-multilingual-uncased'
+    def __init__(self, model_spec = 'bert-base-multilingual-uncased'):
+        self.model_spec = model_spec
         self.model = self.bert_model()
         self.tokenizer = self.bert_tokenizer()
         self.success_count = 0
@@ -40,12 +39,15 @@ class BertEmbedder(BaseEmbedder):
 
     @singleton
     def bert_model(self):
-        model = BertModel.from_pretrained(self.model_file).eval()
+        model = BertModel.from_pretrained(self.model_spec).eval()
         return model
 
     @singleton
     def bert_tokenizer(self):
-        tokenizer = BertTokenizer.from_pretrained(self.vocab_file, do_lower_case=True)
+        do_lower_case = False
+        if 'uncased' in self.model_spec:
+            do_lower_case = True
+        tokenizer = BertTokenizer.from_pretrained(self.model_spec, do_lower_case=do_lower_case)
         return tokenizer
 
     def sentence_embedding(self, text):
