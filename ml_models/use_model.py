@@ -44,8 +44,10 @@ class STEmbedder(BaseEmbedder):
             self.success_count += 1
             return sent_embedding
         except:
+            logger.exception('exception msg %s', text)
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
+        
 
 def check_indexer():
     for q in test_queries:

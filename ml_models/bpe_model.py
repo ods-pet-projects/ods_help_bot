@@ -39,6 +39,7 @@ class BPEEmbedder(BaseEmbedder):
             self.success_count += 1
             return mean_emb / np.linalg.norm(mean_emb)
         except:
+            logger.exception('exception msg %s', text)
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
 

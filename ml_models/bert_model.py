@@ -63,6 +63,7 @@ class BertEmbedder(BaseEmbedder):
             self.success_count += 1
             return vect
         except:
+            logger.exception('exception msg %s', text)
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
 
