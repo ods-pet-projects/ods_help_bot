@@ -29,4 +29,3 @@ class TestIndexer(unittest.TestCase):
 
     def test_bpe_indexer(self):
         pass
-

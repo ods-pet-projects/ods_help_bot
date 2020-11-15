@@ -83,3 +83,4 @@ def get_text_by_ind(ind):
     text = ans_row['text']
     ans_text = ans_row['answer_text']
     return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
+    
