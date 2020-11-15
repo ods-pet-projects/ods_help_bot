@@ -1,5 +1,6 @@
 from functools import wraps
 import numpy as np
+from utils.base_classes import BaseEmbedder
 from indexers.nmslib_indexer import get_text_by_ind, prepare_indexer
 from text_utils.utils import create_logger
 from config import logger_path
@@ -21,7 +22,7 @@ def singleton(cls):
 
     return inner
 
-class BPEEmbedder:
+class BPEEmbedder(BaseEmbedder):
     def __init__(self):
         self.model = self.build_model()
         self.success_count = 0
