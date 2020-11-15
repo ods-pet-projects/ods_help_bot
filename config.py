@@ -11,9 +11,9 @@ LOG_DIR = f'{ROOT_DIR}/logs'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
 
 index_path = {  
-    'bert': f'{DATA}/bert_index_100K',
-    'use': f'{DATA}/st_bert_index',
-    'bpe': f'{DATA}/bpe_index'
+    'bert': f'{ROOT_DIR}/pretrained_indexes/bert_index',
+    'use': f'{ROOT_DIR}/pretrained_indexes/st_bert_index',
+    'bpe': f'{ROOT_DIR}/pretrained_indexes/bpe_index'
     }
 
 logger_path = {
