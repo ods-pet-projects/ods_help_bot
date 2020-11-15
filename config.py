@@ -6,14 +6,15 @@ else:
     ROOT_DIR = os.getcwd() + '/..'
 DATA = f'{ROOT_DIR}/data'
 LOG_DIR = f'{ROOT_DIR}/logs'
+INDEX_DIR = f'{ROOT_DIR}/pretrained_indexes'
 # ifile_train_path = f'{DATA}/ods_answers.csv'
 # ifile_train_path = f'{DATA}/ods_answers_eval.csv'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
 
 index_path = {  
-    'bert': f'{ROOT_DIR}/pretrained_indexes/bert_index',
-    'use': f'{ROOT_DIR}/pretrained_indexes/st_bert_index',
-    'bpe': f'{ROOT_DIR}/pretrained_indexes/bpe_index'
+    'bert': f'{INDEX_DIR}/bert_index',
+    'use': f'{INDEX_DIR}/st_bert_index',
+    'bpe': f'{INDEX_DIR}/bpe_index'
     }
 
 logger_path = {

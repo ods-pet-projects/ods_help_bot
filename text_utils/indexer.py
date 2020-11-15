@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 from text_utils.utils import prepare_ans
-from config import ifile_train_path, index_path
+from config import ifile_train_path, INDEX_DIR, index_path
 
 MAX_TEXT_LEN = 300
 df = pd.read_csv(ifile_train_path)
@@ -40,6 +40,8 @@ class UniIndexer:
     
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
+        if not os.path.exists(INDEX_DIR):
+            os.mkdir(INDEX_DIR)
         if not os.path.exists(index_path):
             self.logger.info(f'train {self.model_name} indexer started')
             names_sparse_matrix = self.make_data_embeddings(data)
