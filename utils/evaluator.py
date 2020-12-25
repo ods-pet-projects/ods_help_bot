@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 import glob
+from config import DATA
 from support_model import get_answer, ModelNames
 
 class Evaluator:
@@ -67,12 +68,12 @@ class Evaluator:
             lines.append(line)
 
         errors = pd.DataFrame(wrong_ans)
-        errors.to_csv('/home/payonear/ods_help_bot/data/errors.csv', index = False)
+        errors.to_csv(DATA + '/errors.csv', index = False)
         report = pd.DataFrame(lines)
         return report
     
     def create_report(self):
-        questions = self.eval_ds['text']
+        questions = self.eval_ds['question']
         true_answers = self.eval_ds['proc_answer']
         self.report = self.build_report(questions, true_answers)
 
