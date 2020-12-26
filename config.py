@@ -22,6 +22,7 @@ logger_path = {
     'use': f'{LOG_DIR}/use_model.log',
     'bpe': f'{LOG_DIR}/bpe_model.log',
     # 'elastic': f'{LOG_DIR}/elastic_model.log'
+    'app': f'{LOG_DIR}/app.log',
 }
 
 indexer_map = {

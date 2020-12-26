@@ -55,7 +55,7 @@ class TestHandler(unittest.TestCase):
             self.assertTrue(ans)
 
     def test_bpe_ans(self):
-        from ml_models.bpe_baseline import get_answer
+        from ml_models.bert_model import get_answer
         for q in self.questions:
             ans_list = get_answer(q)
             print(q)
@@ -64,7 +64,7 @@ class TestHandler(unittest.TestCase):
             self.assertTrue(len(ans_list) > 0)
 
     def test_bert_ans(self):
-        from ml_models.bert_emb_baseline import get_answer
+        from ml_models.bert_model import get_answer
         for q in self.questions:
             ans_list = get_answer(q)
             print(q)
