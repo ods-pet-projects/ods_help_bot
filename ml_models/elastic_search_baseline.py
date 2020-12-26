@@ -156,3 +156,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# curl -X DELETE "localhost:9200/some-index?pretty"
