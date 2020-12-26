@@ -6,14 +6,15 @@ else:
     ROOT_DIR = os.getcwd() + '/..'
 DATA = f'{ROOT_DIR}/data'
 LOG_DIR = f'{ROOT_DIR}/logs'
+INDEX_DIR = f'{ROOT_DIR}/pretrained_indexes'
 # ifile_train_path = f'{DATA}/ods_answers.csv'
 # ifile_train_path = f'{DATA}/ods_answers_eval.csv'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
 
 index_path = {  
-    'bert': f'{DATA}/bert_index_100K',
-    'use': f'{DATA}/st_bert_index',
-    'bpe': f'{DATA}/bpe_index'
+    'bert': f'{INDEX_DIR}/bert_index',
+    'use': f'{INDEX_DIR}/st_bert_index',
+    'bpe': f'{INDEX_DIR}/bpe_index'
     }
 
 logger_path = {
@@ -21,4 +22,10 @@ logger_path = {
     'use': f'{LOG_DIR}/use_model.log',
     'bpe': f'{LOG_DIR}/bpe_model.log',
     # 'elastic': f'{LOG_DIR}/elastic_model.log'
+}
+
+indexer_map = {
+    'bert': 'nmslib',
+    'use': 'nmslib',
+    'bpe': 'nmslib'
 }

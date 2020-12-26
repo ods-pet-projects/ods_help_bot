@@ -1,6 +1,7 @@
 from functools import wraps
 import numpy as np
-from text_utils.indexer import get_text_by_ind, prepare_indexer
+from utils.base_classes import BaseEmbedder
+from utils.indexer_utils import get_text_by_ind, prepare_indexer, test_queries
 from text_utils.utils import create_logger
 from config import logger_path
 from bpemb import BPEmb
@@ -21,7 +22,7 @@ def singleton(cls):
 
     return inner
 
-class BPEEmbedder:
+class BPEEmbedder(BaseEmbedder):
     def __init__(self):
         self.model = self.build_model()
         self.success_count = 0
@@ -38,20 +39,11 @@ class BPEEmbedder:
             self.success_count += 1
             return mean_emb / np.linalg.norm(mean_emb)
         except:
+            logger.exception('exception msg %s', text)
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
 
 def check_indexer():
-    test_queries = ['Есть ли аналоги pandas (ну или не аналоги а тоже либы для работы с данными) для работы с данными',
-                    'Как стать kaggle grandmaster?',
-                    'Что такое BERT?',
-                    'что такое random_b?',
-                    '''Привет! Хочу найти синонимы для слова в контексте (2-3 слова). 
-                    я не верю что для такой задачи нужен трансформер, как BERT или RoBERTa. 
-                    Что думаете? Каким было бы ваше решение в лоб?''',
-                    'Подскажите, пожалуйста, с чего начать изучение NLP? Можете посоветовать какие-нибудь курсы?'
-                    ]
-
     for q in test_queries:
         print('____', q)
         ans_list = get_answer(q)
