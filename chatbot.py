@@ -4,6 +4,7 @@ from functools import partial
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
+from support_model import model_name_dict
 from text_utils.utils import create_logger
 from config import API_URL, MODEL_NAME
 import requests
@@ -205,7 +206,7 @@ def main():
     dispatcher.add_handler(CommandHandler('info', info))
 
     dispatcher.add_handler(CommandHandler('setmodel', set_model))
-    for model_name in support_model.model_name_dict.keys():
+    for model_name in model_name_dict.keys():
         dispatcher.add_handler(CommandHandler(model_name, partial(set_model, model_name=model_name)))
     dispatcher.add_handler(CommandHandler('showmodel', show_model))
     dispatcher.add_handler(CommandHandler('history', show_history))

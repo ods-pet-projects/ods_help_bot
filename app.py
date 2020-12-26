@@ -5,7 +5,7 @@ werkzeug.cached_property = werkzeug.utils.cached_property
 from flask_restplus import Api, Resource
 import sys
 
-from config import logger_path, models_names_dict, MODEL_NAME
+from config import logger_path, model_name_dict, MODEL_NAME
 from text_utils.utils import create_logger
 
 sys.path.append('..')
@@ -28,7 +28,7 @@ class Answer(Resource):
     def get(self):
         q = request.args.get('q')
         model_name = request.args.get('model_name')
-        model_name = models_names_dict.get(model_name, MODEL_NAME)
+        model_name = model_name_dict.get(model_name, MODEL_NAME)
         logger.info(q)
         ans_list_init = get_answer(q, model_name)
         logger.info(ans_list_init)

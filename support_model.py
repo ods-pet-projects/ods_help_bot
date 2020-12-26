@@ -12,7 +12,6 @@ else:
     from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
 
 
-model_name_dict = {x.value: x for x in ModelNames}
 
 
 def get_keywords(query):

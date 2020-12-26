@@ -45,9 +45,4 @@ class ModelNames(enum.Enum):
 
 # default model
 MODEL_NAME = ModelNames.ELASTIC
-
-models_names_dict = {'bert': ModelNames.BERT,
-                     'use': ModelNames.USE,
-                     'elastic': ModelNames.ELASTIC,
-                     'bpe': ModelNames.BPE
-                     }
+model_name_dict = {x.value: x for x in ModelNames}
