@@ -12,6 +12,7 @@ from text_utils.utils import prepare_ans, create_logger
 
 FEATURE_SIZE = 768
 MAX_TEXT_LEN = 300
+SENT_LAYER_NUM = 11
 
 prefix = "[CLS] "
 postfix = " [SEP]"
@@ -74,14 +75,14 @@ class BertEmbedder:
         matrix = bert_word_embeddings.weight.data.numpy()
         return matrix
 
-    def sentence_embedding(self, text):
+    def sentence_embedding(self, text: str):
         try:
             token_list = self.tokenizer.tokenize(text)
             segments_ids, indexed_tokens = [1] * len(token_list), self.tokenizer.convert_tokens_to_ids(token_list)
             segments_tensors, tokens_tensor = torch.tensor([segments_ids]), torch.tensor([indexed_tokens])
             with torch.no_grad():
                 encoded_layers, _ = self.model(tokens_tensor, segments_tensors)
-            sent_embedding = torch.mean(encoded_layers[11], 1)
+            sent_embedding = torch.mean(encoded_layers[SENT_LAYER_NUM], 1)
             vect = sent_embedding[0].numpy()
             self.success_count += 1
             return vect
