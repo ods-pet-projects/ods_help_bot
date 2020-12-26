@@ -149,10 +149,9 @@ if not es.indices.exists(index="some-index"):
 
 
 def main():
-    if not index_ready:
-        build_index()
-    check_elastic_ans()
-    run_elastic_circle()
+    build_index()
+    # check_elastic_ans()
+    # run_elastic_circle()
 
 
 if __name__ == '__main__':
