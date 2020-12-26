@@ -36,14 +36,14 @@ class Answer(Resource):
         return jsonify(answer_list)
 
 
-@api.route('/api/v1/answer', methods=["GET"])
-@api.doc(params={'answer_id': 'answer id'})
-class AnswerDescription(Resource):
-    def get(self):
-        answer_id = request.args.get('answer_id')
-        description = get_post_desc(answer_id)
-        description['questionId'] = str(description['questionId'])
-        return jsonify(description)
+# @api.route('/api/v1/answer', methods=["GET"])
+# @api.doc(params={'answer_id': 'answer id'})
+# class AnswerDescription(Resource):
+#     def get(self):
+#         answer_id = request.args.get('answer_id')
+#         description = get_post_desc(answer_id)
+#         description['questionId'] = str(description['questionId'])
+#         return jsonify(description)
 
 '''
 GET /find?q=Text+here
