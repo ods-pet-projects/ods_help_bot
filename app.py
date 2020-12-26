@@ -3,18 +3,17 @@ from flask_cors import CORS
 import werkzeug
 werkzeug.cached_property = werkzeug.utils.cached_property
 from flask_restplus import Api, Resource
-import os
 import sys
 
-from config import logger_path
+from config import logger_path, models_names_dict, MODEL_NAME
 from text_utils.utils import create_logger
 
 sys.path.append('..')
-
-# from support_model import get_answer
+from support_model import get_answer
 
 get_post_desc = lambda x: {"questionId": "0", "question": "how are you?", "answer": "I'm fine thanks"}
-get_answer = lambda x: "42"
+# get_answer = lambda x, model_name: ["test 1", "test 2", "test 3", "test 4"]
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 cors = CORS(app, resources={r"/api/chat/v1*": {"origins": "*"}})
@@ -23,12 +22,15 @@ logger = create_logger(__name__, logger_path['app'])
 
 
 @api.route('/api/v1/find', methods=['GET'])
-@api.doc(params={'q': 'text question'})
+@api.doc(params={'q': 'text question',
+                 'model_name': 'bert, sbert, bpe, elastic'})
 class Answer(Resource):
     def get(self):
         q = request.args.get('q')
+        model_name = request.args.get('model_name')
+        model_name = models_names_dict.get(model_name, MODEL_NAME)
         logger.info(q)
-        ans_list_init = get_answer(q)
+        ans_list_init = get_answer(q, model_name)
         logger.info(ans_list_init)
         answer_list = [a for a in ans_list_init]
         return jsonify(answer_list)

@@ -1,13 +1,12 @@
-import logging
 import os
 from functools import partial
 
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
-from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
-import support_model
 from text_utils.utils import create_logger
+from config import API_URL, MODEL_NAME
+import requests
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
 
@@ -48,7 +47,7 @@ logger.debug('Support chat bot started')
 
 def start(update, context):
     logger.info('start msg %s', replies['start'])
-    context.user_data['model_name'] = support_model.MODEL_NAME
+    context.user_data['model_name'] = MODEL_NAME
     if 'history' not in context.user_data:
         context.user_data['history'] = []
     if 'last_answers' not in context.user_data:
@@ -94,6 +93,10 @@ def show_model(update, context):
                              parse_mode=ParseMode.MARKDOWN_V2)
 
 
+def get_answer_from_api(query, model_name):
+    return requests.get(f'{API_URL}/find', params=dict(q=query, model_name=model_name)).json()
+
+
 def reply(update, context):
     query = update.message.text
     model_name = context.user_data['model_name']
@@ -103,7 +106,8 @@ def reply(update, context):
     else:
         context.user_data['history'].append(query)
 
-    ans_list = support_model.get_answer(query, model_name=model_name)
+    ans_list = get_answer_from_api(query, model_name=model_name)
+
     context.user_data['last_answers'] = ans_list
     context.user_data['assessment_has_set'] = False
     context.user_data['curr_ans'] = 0

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from gensim.summarization import keywords
 from gensim.parsing.preprocessing import remove_stopwords
-import enum
 import os
+
+from config import ModelNames, MODEL_NAME
 
 test_mode = not os.environ.get('TOKEN')
 if test_mode:
@@ -10,16 +11,6 @@ if test_mode:
 else:
     from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
 
-
-class ModelNames(enum.Enum):
-    ELASTIC = 'elastic'
-    BERT = 'bert'
-    BPE = 'bpe'
-    USE = 'use'
-
-
-# default model
-MODEL_NAME = ModelNames.ELASTIC
 
 model_name_dict = {x.value: x for x in ModelNames}
 
@@ -52,7 +43,7 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
             answer_list = use_model.get_answer(query)
         return answer_list
     except Exception as ex:
-        print(ex)
+        print('exception:', ex)
         return ["not found :(\nPlease paraphrase your query"]
 
 

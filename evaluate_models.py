@@ -2,9 +2,8 @@ import glob
 import numpy as np
 import os
 import pandas as pd
-from support_model import get_answer, ModelNames
-import nltk
-from config import DATA
+from support_model import get_answer
+from config import DATA, ModelNames
 
 
 ifile_all_path = f'{DATA}/labelled_all.csv'

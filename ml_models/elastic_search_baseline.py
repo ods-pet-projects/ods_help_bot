@@ -6,10 +6,10 @@ import sys
 import re
 
 sys.path.append('..')
-from config import DATA, ifile_train_path
+from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
 
-MAX_ANSWER_COUNT = 4
+
 MAX_TEXT_LEN = 600
 es = Elasticsearch()
 
