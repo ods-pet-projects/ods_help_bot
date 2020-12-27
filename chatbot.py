@@ -99,7 +99,7 @@ def get_answer_from_api(query, model_name):
 
 def reply(update, context):
     query = update.message.text
-    model_name = context.user_data['model_name']
+    model_name = context.user_data.get('model_name', MODEL_NAME)
 
     if 'history' not in context.user_data:
         context.user_data['history'] = []
