@@ -4,9 +4,8 @@ from functools import partial
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
-from support_model import model_name_dict
 from text_utils.utils import create_logger
-from config import API_URL, MODEL_NAME
+from config import API_URL, MODEL_NAME, model_name_dict, MAX_ANSWER_COUNT
 import requests
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
@@ -77,8 +76,8 @@ def set_model(update, context, model_name=None):
     if not model_name:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text='empty model name')
-    elif model_name in support_model.model_name_dict:
-        context.user_data['model_name'] = support_model.model_name_dict[model_name]
+    elif model_name in model_name_dict:
+        context.user_data['model_name'] = model_name_dict[model_name]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text='set model `{}`'.format(model_name),
                                  parse_mode=ParseMode.MARKDOWN_V2)
