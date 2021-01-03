@@ -46,3 +46,4 @@ class ModelNames(enum.Enum):
 # default model
 MODEL_NAME = ModelNames.BPE
 model_name_dict = {x.value: x for x in ModelNames}
+used_models = [ModelNames.BPE]

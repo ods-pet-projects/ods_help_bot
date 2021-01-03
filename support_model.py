@@ -1,17 +1,26 @@
 # -*- coding: utf-8 -*-
 from gensim.summarization import keywords
 from gensim.parsing.preprocessing import remove_stopwords
-import os
 
-from config import ModelNames, MODEL_NAME
+from config import ModelNames, MODEL_NAME, used_models
 
-test_mode = not os.environ.get('TOKEN')
-if test_mode:
-    elastic_search_baseline, bert_model, bpe_model, use_model = 1, 2, 3, 4
+if ModelNames.ELASTIC in used_models:
+    from ml_models import elastic_search_baseline
+
+if MODEL_NAME.BERT in used_models:
+    from ml_models import bert_model
 else:
-    from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
+    bert_model = 1
 
+if MODEL_NAME.BPE in used_models:
+    from ml_models import bpe_model
+else:
+    bpe_model = 1
 
+if MODEL_NAME.USE in used_models:
+    from ml_models import use_model
+else:
+    use_model = 1
 
 
 def get_keywords(query):
