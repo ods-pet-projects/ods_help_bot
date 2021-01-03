@@ -11,7 +11,7 @@ from text_utils.utils import create_logger
 sys.path.append('..')
 from support_model import get_answer
 
-get_post_desc = lambda x: {"questionId": "0", "question": "how are you?", "answer": "I'm fine thanks"}
+# get_post_desc = lambda x: {"questionId": "0", "question": "how are you?", "answer": "I'm fine thanks"}
 # get_answer = lambda x, model_name: ["test 1", "test 2", "test 3", "test 4"]
 
 app = Flask(__name__)
