@@ -5,7 +5,7 @@ import glob
 from gensim.summarization import keywords
 from gensim.parsing.preprocessing import remove_stopwords
 import enum
-from config import DATA
+from config import DATA, ifile_train_path
 from support_model import MODEL_NAME, ModelNames, get_keywords, remove_stop_words_func
 from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
 
@@ -36,6 +36,7 @@ class Evaluator:
     def build_report(self, questions, true_answers):
         lines = []
         wrong_ans = []
+        train_df = pd.read_csv(ifile_train_path)
         for model_name in ModelNames:
             score_top_1 = 0
             score_top_4 = 0
@@ -51,8 +52,8 @@ class Evaluator:
                     if acc_top_1 == 0:
                         err = dict(
                             model = model_name,
-                            true_answer = true_ans,
-                            model_answer = ans_list[0]
+                            true_answer = train_df[train_df['new_ind'] == true_ans].text,
+                            model_answer = train_df[train_df['new_ind'] == ans_list[0]].text
                         )
                         wrong_ans.append(err)
                 else:
@@ -78,7 +79,7 @@ class Evaluator:
     
     def create_report(self):
         questions = self.eval_ds['question']
-        true_answers = self.eval_ds['proc_answer']
+        true_answers = self.eval_ds['new_ind']
         self.report = self.build_report(questions, true_answers)
 
     def print_report(self):
