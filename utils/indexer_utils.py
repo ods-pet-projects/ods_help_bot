@@ -22,6 +22,9 @@ def get_text_by_ind(ind):
     ans_text = ans_row['answer_text']
     return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
 
+def get_new_ind_by_ind(ind):
+    ans_row = df.iloc[ind]
+    return ans_row['new_ind']
 
 
 test_queries = ['Есть ли аналоги pandas (ну или не аналоги а тоже либы для работы с данными) для работы с данными',

@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 from functools import wraps
 import numpy as np
 from utils.base_classes import BaseEmbedder
-from utils.indexer_utils import get_text_by_ind, prepare_indexer, test_queries
+from utils.indexer_utils import get_text_by_ind, get_new_ind_by_ind, prepare_indexer, test_queries
 from text_utils.utils import create_logger
 from config import logger_path
 
@@ -62,6 +62,10 @@ def check_indexer():
 def get_answer(query):
     ans_list = [get_text_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ans_list
+
+def get_answer_ind(query):
+    ind_list = [get_new_ind_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
+    return ind_list
 
 logger.info('use indexer started')
 indexer, df = prepare_indexer('use', logger)
