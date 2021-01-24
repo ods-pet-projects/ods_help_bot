@@ -52,7 +52,9 @@ class Evaluator:
                     if acc_top_1 == 0:
                         err = dict(
                             model = model_name,
+                            true_id = true_ans,
                             true_answer = train_df[train_df['new_ind'] == true_ans].text,
+                            pred_id = ans_list[0],
                             model_answer = train_df[train_df['new_ind'] == ans_list[0]].text
                         )
                         wrong_ans.append(err)
@@ -89,7 +91,7 @@ class Evaluator:
             print('Report was not built!')
 
 
-def get_answer_ind(query, use_lower=True, use_keywords=False, use_remove_stopwords=False, model_name=MODEL_NAME):
+def get_answer_ind(query, use_lower=False, use_keywords=False, use_remove_stopwords=False, model_name=MODEL_NAME):
     if use_lower:
         query = query.lower()
     if use_keywords:
