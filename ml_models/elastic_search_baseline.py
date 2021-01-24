@@ -9,13 +9,14 @@ sys.path.append('..')
 from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
 
-
 MAX_TEXT_LEN = 600
 es = Elasticsearch()
 
+INDEX_NAME = "ods-index"
+
 
 def get_answer_first(query):
-    res = es.search(index="some-index",
+    res = es.search(index=INDEX_NAME,
                     body={'query': {'match': {
                         'text':
                             {'query': query,
@@ -33,8 +34,9 @@ def get_answer(query):
         sleep(10)
         return get_answer_first(query)
 
+
 def get_answer_ind(query):
-    res = es.search(index="some-index",
+    res = es.search(index=INDEX_NAME,
                     body={'query': {'match': {
                         'text':
                             {'query': query,
@@ -42,6 +44,7 @@ def get_answer_ind(query):
                     }}})
     _, ind = print_res(res)
     return ind
+
 
 def print_res(res):
     if len(res['hits']['hits']) > 0:
@@ -57,7 +60,7 @@ def print_res(res):
                 ind_list.append(doc_ind)
         return ans_list, ind_list
     else:
-        return ["not found :(\nPlease paraphrase your query"]
+        return ["not found :(\nPlease paraphrase your query"], [0]
 
 
 def get_doc_title(doc_text):
@@ -68,7 +71,7 @@ def get_doc_title(doc_text):
 
 def add_doc_to_index(doc):
     try:
-        es.index(index="some-index", doc_type="text", body=doc)
+        es.index(index=INDEX_NAME, doc_type="text", body=doc)
         return True
     except Exception as ex:
         print(ex)
@@ -82,8 +85,8 @@ def find_urls(string):
 
 
 def build_index():
-    if es.indices.exists(index="some-index"):
-        es.indices.delete(index="some-index", ignore=[400, 404])
+    if es.indices.exists(index=INDEX_NAME):
+        es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
     # doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
@@ -156,7 +159,7 @@ def run_elastic_circle():
 
 
 index_ready = False
-if not es.indices.exists(index="some-index"):
+if not es.indices.exists(index=INDEX_NAME):
     build_index()
     index_ready = True
 
@@ -170,4 +173,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-# curl -X DELETE "localhost:9200/some-index?pretty"
+# curl -X DELETE "localhost:9200/ods-index?pretty"
