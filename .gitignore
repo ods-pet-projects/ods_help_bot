@@ -2,5 +2,6 @@
 .idea
 __*
 data
+pretrained_indexes
 logs
 persistence.pickle

@@ -1,13 +1,12 @@
-import logging
 import os
 from functools import partial
 
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PicklePersistence, CallbackQueryHandler
 
-from ml_models.elastic_search_baseline import MAX_ANSWER_COUNT
-import support_model
 from text_utils.utils import create_logger
+from config import API_URL, MODEL_NAME, model_name_dict, MAX_ANSWER_COUNT
+import requests
 
 my_persistence = PicklePersistence(filename='persistence.pickle')
 
@@ -48,7 +47,7 @@ logger.debug('Support chat bot started')
 
 def start(update, context):
     logger.info('start msg %s', replies['start'])
-    context.user_data['model_name'] = support_model.MODEL_NAME
+    context.user_data['model_name'] = MODEL_NAME
     if 'history' not in context.user_data:
         context.user_data['history'] = []
     if 'last_answers' not in context.user_data:
@@ -77,8 +76,8 @@ def set_model(update, context, model_name=None):
     if not model_name:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text='empty model name')
-    elif model_name in support_model.model_name_dict:
-        context.user_data['model_name'] = support_model.model_name_dict[model_name]
+    elif model_name in model_name_dict:
+        context.user_data['model_name'] = model_name_dict[model_name]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text='set model `{}`'.format(model_name),
                                  parse_mode=ParseMode.MARKDOWN_V2)
@@ -94,16 +93,21 @@ def show_model(update, context):
                              parse_mode=ParseMode.MARKDOWN_V2)
 
 
+def get_answer_from_api(query, model_name):
+    return requests.get(f'{API_URL}/find', params=dict(q=query, model_name=model_name)).json()
+
+
 def reply(update, context):
     query = update.message.text
-    model_name = context.user_data['model_name']
+    model_name = context.user_data.get('model_name', MODEL_NAME)
 
     if 'history' not in context.user_data:
         context.user_data['history'] = []
     else:
         context.user_data['history'].append(query)
 
-    ans_list = support_model.get_answer(query, model_name=model_name)
+    ans_list = get_answer_from_api(query, model_name=model_name)
+
     context.user_data['last_answers'] = ans_list
     context.user_data['assessment_has_set'] = False
     context.user_data['curr_ans'] = 0
@@ -201,7 +205,7 @@ def main():
     dispatcher.add_handler(CommandHandler('info', info))
 
     dispatcher.add_handler(CommandHandler('setmodel', set_model))
-    for model_name in support_model.model_name_dict.keys():
+    for model_name in model_name_dict.keys():
         dispatcher.add_handler(CommandHandler(model_name, partial(set_model, model_name=model_name)))
     dispatcher.add_handler(CommandHandler('showmodel', show_model))
     dispatcher.add_handler(CommandHandler('history', show_history))

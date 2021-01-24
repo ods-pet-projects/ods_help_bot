@@ -1,3 +1,4 @@
+import enum
 import os
 
 if os.getcwd().endswith('help_bot'):
@@ -13,17 +14,18 @@ EVAL_DATA_DIR= f'{DATA}/labelled_all.csv'
 # ifile_train_path = f'{DATA}/ods_answers_eval.csv'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
 
-index_path = {  
+index_path = {
     'bert': f'{INDEX_DIR}/bert_index',
     'use': f'{INDEX_DIR}/st_bert_index',
     'bpe': f'{INDEX_DIR}/bpe_index'
-    }
+}
 
 logger_path = {
     'bert': f'{LOG_DIR}/bert_model.log',
     'use': f'{LOG_DIR}/use_model.log',
     'bpe': f'{LOG_DIR}/bpe_model.log',
     # 'elastic': f'{LOG_DIR}/elastic_model.log'
+    'app': f'{LOG_DIR}/app.log',
 }
 
 indexer_map = {
@@ -31,3 +33,19 @@ indexer_map = {
     'use': 'nmslib',
     'bpe': 'nmslib'
 }
+
+API_URL = 'http://0.0.0.0:8080/api/v1'
+MAX_ANSWER_COUNT = 4
+
+
+class ModelNames(enum.Enum):
+    ELASTIC = 'elastic'
+    BERT = 'bert'
+    BPE = 'bpe'
+    USE = 'use'
+
+
+# default model
+MODEL_NAME = ModelNames.BPE
+model_name_dict = {x.value: x for x in ModelNames}
+used_models = [ModelNames.BPE]

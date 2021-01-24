@@ -6,10 +6,10 @@ import sys
 import re
 
 sys.path.append('..')
-from config import DATA, ifile_train_path
+from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
 
-MAX_ANSWER_COUNT = 4
+
 MAX_TEXT_LEN = 600
 es = Elasticsearch()
 
@@ -162,11 +162,12 @@ if not es.indices.exists(index="some-index"):
 
 
 def main():
-    if not index_ready:
-        build_index()
-    check_elastic_ans()
-    run_elastic_circle()
+    build_index()
+    # check_elastic_ans()
+    # run_elastic_circle()
 
 
 if __name__ == '__main__':
     main()
+
+# curl -X DELETE "localhost:9200/some-index?pretty"

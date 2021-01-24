@@ -6,6 +6,7 @@ from indexers.nmslib_indexer import NMSlibIndexer
 df = pd.read_csv(ifile_train_path)
 MAX_TEXT_LEN = 300
 
+
 def prepare_indexer(model_name, logger):
     if indexer_map[model_name] == 'nmslib':
         indexer = NMSlibIndexer(model_name, logger)
@@ -26,7 +27,6 @@ def get_new_ind_by_ind(ind):
     ans_row = df.iloc[ind]
     return ans_row['new_ind']
 
-
 test_queries = ['Есть ли аналоги pandas (ну или не аналоги а тоже либы для работы с данными) для работы с данными',
                 'Как стать kaggle grandmaster?',
                 'Что такое BERT?',
@@ -35,4 +35,3 @@ test_queries = ['Есть ли аналоги pandas (ну или не анал�
                     я не верю что для такой задачи нужен трансформер, как BERT или RoBERTa. 
                     Что думаете? Каким было бы ваше решение в лоб?''',
                 'Подскажите, пожалуйста, с чего начать изучение NLP? Можете посоветовать какие-нибудь курсы?']
-    
