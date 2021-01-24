@@ -6,6 +6,8 @@ from config import ModelNames, MODEL_NAME, used_models
 
 if ModelNames.ELASTIC in used_models:
     from ml_models import elastic_search_baseline
+else:
+    elastic_search_baseline = 1
 
 if MODEL_NAME.BERT in used_models:
     from ml_models import bert_model
