@@ -21,7 +21,8 @@ def get_answer_first(query):
                             {'query': query,
                              'operator': 'OR'}
                     }}})
-    return print_res(res)
+    answer, _ = print_res(res)
+    return answer
 
 
 def get_answer(query):
@@ -32,17 +33,29 @@ def get_answer(query):
         sleep(10)
         return get_answer_first(query)
 
+def get_answer_ind(query):
+    res = es.search(index="some-index",
+                    body={'query': {'match': {
+                        'text':
+                            {'query': query,
+                             'operator': 'OR'}
+                    }}})
+    _, ind = print_res(res)
+    return ind
 
 def print_res(res):
     if len(res['hits']['hits']) > 0:
         ans_list = []
+        ind_list = []
         for i, item in enumerate(res['hits']['hits']):
             if i > MAX_ANSWER_COUNT:
                 break
-            doc_preview_text = item['_source']["show_text"] + '...'
+            doc_preview_text = item['_source']['show_text'] + '...'
+            doc_ind = item['_source']['doc_id']
             if doc_preview_text not in ans_list:
                 ans_list.append(doc_preview_text)
-        return ans_list
+                ind_list.append(doc_ind)
+        return ans_list, ind_list
     else:
         return ["not found :(\nPlease paraphrase your query"]
 
@@ -71,7 +84,7 @@ def find_urls(string):
 def build_index():
     if es.indices.exists(index="some-index"):
         es.indices.delete(index="some-index", ignore=[400, 404])
-    doc_dir = DATA
+    # doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
     # data = pd.read_csv(f'{doc_dir}/ods_answers.csv')

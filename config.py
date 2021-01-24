@@ -8,6 +8,8 @@ else:
 DATA = f'{ROOT_DIR}/data'
 LOG_DIR = f'{ROOT_DIR}/logs'
 INDEX_DIR = f'{ROOT_DIR}/pretrained_indexes'
+EVAL_FILES_DIR = f'{DATA}/alt_eval/*.csv'
+EVAL_DATA_DIR= f'{DATA}/labelled_all.csv'
 # ifile_train_path = f'{DATA}/ods_answers.csv'
 # ifile_train_path = f'{DATA}/ods_answers_eval.csv'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
