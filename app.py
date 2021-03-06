@@ -4,7 +4,7 @@ import werkzeug
 werkzeug.cached_property = werkzeug.utils.cached_property
 from flask_restplus import Api, Resource
 import sys
-
+import os
 from config import logger_path, model_name_dict, MODEL_NAME
 from text_utils.utils import create_logger
 
@@ -67,4 +67,5 @@ GET /answer/{id}
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8888)
+    use_port = os.environ.get('APP_PORT') or 8080
+    app.run(debug=True, host='0.0.0.0', port=use_port)
