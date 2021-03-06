@@ -10,6 +10,7 @@ logger = create_logger(__name__, logger_path['bpe'])
 
 FEATURE_SIZE = 300
 
+
 def singleton(cls):
     instance = None
 
@@ -21,6 +22,7 @@ def singleton(cls):
         return instance
 
     return inner
+
 
 class BPEEmbedder(BaseEmbedder):
     def __init__(self):
@@ -58,9 +60,11 @@ def get_answer(query):
     ans_list = [get_text_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ans_list
 
+
 def get_answer_ind(query):
     ind_list = [get_new_ind_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ind_list
+
 
 logger.info('bpe indexer started')
 indexer, df = prepare_indexer('bpe', logger)
