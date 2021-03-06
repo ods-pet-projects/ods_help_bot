@@ -19,7 +19,8 @@ def create_logger(logger_name: str, logger_path: str) -> logging.Logger:
 
 
 def replace_name(string):
-    return re.sub(r'<@\w*>', '<b>ods_help_bot</b>', string).replace('<http', 'http').replace('<#', '#')
+    # return re.sub(r'<@\w*>', '*ods_help_bot*', string).replace('<http', 'http').replace('<#', '#')
+    return string.replace('<http', 'http').replace('<#', '#')
 
 
 def prepare_ans(channel, text, ans_text, max_text_len=600, channel_id=None, timestamp=None):
