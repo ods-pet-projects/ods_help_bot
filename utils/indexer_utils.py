@@ -21,7 +21,8 @@ def get_text_by_ind(ind):
     channel = ans_row['channel']
     text = ans_row['text']
     ans_text = ans_row['answer_text']
-    return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN)
+    channel_id, timestamp = ans_row['new_ind'].split('_')
+    return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN, channel_id, timestamp)
 
 def get_new_ind_by_ind(ind):
     ans_row = df.iloc[ind]

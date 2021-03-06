@@ -22,18 +22,20 @@ logger = create_logger(__name__, logger_path['app'])
 
 
 @api.route('/api/v1/find', methods=['GET'])
-@api.doc(params={'q': 'text question',
+@api.doc(params={'query': 'text question',
                  'model_name': 'bert, sbert, bpe, elastic'})
 class Answer(Resource):
     def get(self):
-        q = request.args.get('q')
-        model_name = request.args.get('model_name')
-        model_name = model_name_dict.get(model_name, MODEL_NAME)
-        logger.info(q)
-        ans_list_init = get_answer(q, model_name)
-        logger.info(ans_list_init)
-        answer_list = [a for a in ans_list_init]
-        return jsonify(answer_list)
+        q = request.args.get('query', '')
+        if len(q) > 1:
+            model_name = request.args.get('model_name')
+            model_name = model_name_dict.get(model_name, MODEL_NAME)
+            logger.info(q)
+            ans_list_init = get_answer(q, model_name)
+            logger.info(ans_list_init)
+            answer_list = [a for a in ans_list_init]
+            return jsonify(answer_list)
+        return "not found"
 
 
 # @api.route('/api/v1/answer', methods=["GET"])
@@ -63,4 +65,4 @@ GET /answer/{id}
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8888)

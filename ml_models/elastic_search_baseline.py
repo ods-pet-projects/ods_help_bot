@@ -53,14 +53,23 @@ def print_res(res):
         for i, item in enumerate(res['hits']['hits']):
             if i > MAX_ANSWER_COUNT:
                 break
+
             doc_preview_text = item['_source']['show_text'] + '...'
-            doc_ind = item['_source']['doc_id']
+
             if doc_preview_text not in ans_list:
-                ans_list.append(doc_preview_text)
-                ind_list.append(doc_ind)
+                ans = {'text': doc_preview_text,
+                       'channel_id': item['_source']['channel_id'],
+                       'timestamp': item['_source']['timestamp']
+                       }
+                ans_list.append(ans)
+                ind_list.append(item['_source']['doc_id'])
         return ans_list, ind_list
     else:
-        return ["not found :(\nPlease paraphrase your query"], [0]
+        empty_ans = {'text': "not found :(\nPlease paraphrase your query",
+                     'channel_id': "0",
+                     "timestamp": "0"
+                     }
+        return [empty_ans], [0]
 
 
 def get_doc_title(doc_text):
@@ -110,16 +119,18 @@ def build_index():
         channel = doc_row['channel']
         text = doc_row['text']
         answer_text = doc_row['answer_text']
-
+        channel_id, timestamp = doc_row['new_ind'].split('_')
         doc_links = find_urls(text)
-        show_text = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN)
+        ans_dict = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN, channel_id, timestamp)
         doc = {
             "doc_id": client_msg_id,
             "doc_title": channel,
             "text": text,
             "answer_text": answer_text,
-            "show_text": show_text,
-            "link": doc_links
+            "show_text": ans_dict['text'],
+            "link": doc_links,
+            "channel_id": channel_id,
+            "timestamp": timestamp
         }
 
         if add_doc_to_index(doc):

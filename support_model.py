@@ -33,13 +33,28 @@ def remove_stop_words_func(query):
     return remove_stopwords(query)
 
 
-def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=False, model_name=MODEL_NAME):
+def remove_slack_commands(query):
+    slack_commands = {
+        "<!everyone>": "everyone",
+        "<!channel>": "channel",
+        "<!here>": "here"
+    }
+    for k, v in slack_commands.items():
+        query = query.replace(k, v)
+    return query
+
+
+def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=False, model_name=MODEL_NAME,
+               use_remove_slack_commands=True
+               ):
     if use_lower:
         query = query.lower()
     if use_keywords:
         query = get_keywords(query)
     if use_remove_stopwords:
         query = remove_stop_words_func(query)
+    if use_remove_slack_commands:
+        query = remove_slack_commands(query)
 
     try:
         answer_list = []
