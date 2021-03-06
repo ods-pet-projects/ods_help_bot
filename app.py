@@ -25,7 +25,7 @@ logger = create_logger(__name__, logger_path['app'])
 def answer_by_api(q, model_name, user_id, agent_name):
     if len(q) > 1:
         model_name = model_name_dict.get(model_name, MODEL_NAME)
-        stat_str = f'agent_name: {agent_name} user: {user_id}, query: {q}, model_name: {model_name}'
+        stat_str = f'agent_name: {agent_name}, user: {user_id}, query: {q}, model_name: {model_name}'
         logger.info(stat_str)
         ans_list_init = get_answer(q, model_name=model_name)
         logger.info(f'{stat_str}, answer: {ans_list_init}')
