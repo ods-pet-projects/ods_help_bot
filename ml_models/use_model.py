@@ -54,7 +54,7 @@ def check_indexer():
         print('____', q)
         ans_list = get_answer(q)
         for ans in ans_list:
-            print('\t\t', ans.replace('\n', ''))
+            print('\t\t', ans['text'].replace('\n', ''))
         print()
         print()
 
