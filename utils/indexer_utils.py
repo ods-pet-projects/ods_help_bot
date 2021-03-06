@@ -24,9 +24,11 @@ def get_text_by_ind(ind):
     channel_id, timestamp = ans_row['new_ind'].split('_')
     return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN, channel_id, timestamp)
 
+
 def get_new_ind_by_ind(ind):
     ans_row = df.iloc[ind]
     return ans_row['new_ind']
+
 
 test_queries = ['Есть ли аналоги pandas (ну или не аналоги а тоже либы для работы с данными) для работы с данными',
                 'Как стать kaggle grandmaster?',

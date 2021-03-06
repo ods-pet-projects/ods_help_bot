@@ -25,7 +25,7 @@ def replace_name(string):
 def prepare_ans(channel, text, ans_text, max_text_len=600, channel_id=None, timestamp=None):
     question_text = text[: max_text_len]
     ans_text = ans_text[: max_text_len]
-    text = replace_name(f'*{channel}*\n{question_text}\n_____{ans_text}')
+    text = replace_name(f'*{channel}*\n{question_text}\n{ans_text}')
     return {'text': text,
             'channel_id': channel_id,
             'timestamp': timestamp

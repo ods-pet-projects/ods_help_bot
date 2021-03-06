@@ -31,7 +31,7 @@ class Answer(Resource):
             model_name = request.args.get('model_name')
             model_name = model_name_dict.get(model_name, MODEL_NAME)
             logger.info(q)
-            ans_list_init = get_answer(q, model_name)
+            ans_list_init = get_answer(q, model_name=model_name)
             logger.info(ans_list_init)
             answer_list = [a for a in ans_list_init]
             return jsonify(answer_list)
