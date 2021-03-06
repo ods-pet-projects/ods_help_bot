@@ -43,6 +43,7 @@ class BPEEmbedder(BaseEmbedder):
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
 
+
 def check_indexer():
     for q in test_queries:
         print('____', q)
