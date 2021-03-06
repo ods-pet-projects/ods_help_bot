@@ -27,6 +27,7 @@ logger = create_logger(__name__, logger_path['app'])
 class Answer(Resource):
     def get(self):
         q = request.args.get('query', '')
+        logger.info('input query %s', q)
         if len(q) > 1:
             model_name = request.args.get('model_name')
             model_name = model_name_dict.get(model_name, MODEL_NAME)
