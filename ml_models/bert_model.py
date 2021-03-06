@@ -12,6 +12,7 @@ logger = create_logger(__name__, logger_path['bert'])
 MAX_TEXT_LEN = 512
 FEATURE_SIZE = 768
 
+
 def singleton(cls):
     instance = None
 
@@ -30,7 +31,7 @@ class BertEmbedder(BaseEmbedder):
     Embedding Wrapper on Bert Multilingual Uncased
     """
 
-    def __init__(self, model_spec = 'bert-base-multilingual-uncased'):
+    def __init__(self, model_spec='bert-base-multilingual-uncased'):
         self.model_spec = model_spec
         self.model = self.bert_model()
         self.tokenizer = self.bert_tokenizer()
@@ -52,12 +53,12 @@ class BertEmbedder(BaseEmbedder):
 
     def sentence_embedding(self, text):
         try:
-            inputs_ids, token_type_ids, attention_mask = self.tokenizer.encode_plus(text,add_special_tokens = True,
-                        max_length = MAX_TEXT_LEN,
-                        padding = False,
-                        truncation=True,
-                        return_tensors = 'pt').values()
-            
+            inputs_ids, token_type_ids, attention_mask = self.tokenizer.encode_plus(text, add_special_tokens=True,
+                                                                                    max_length=MAX_TEXT_LEN,
+                                                                                    padding=False,
+                                                                                    truncation=True,
+                                                                                    return_tensors='pt').values()
+
             with torch.no_grad():
                 encoded_layers, _ = self.model(inputs_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
             sent_embedding = encoded_layers.mean(dim=1)
@@ -81,12 +82,15 @@ def check_indexer():
 
 
 def get_answer(query):
+    print('use bert model')
     ans_list = [get_text_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ans_list
+
 
 def get_answer_ind(query):
     ind_list = [get_new_ind_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ind_list
+
 
 logger.info('bert indexer started')
 indexer, df = prepare_indexer('bert', logger)
