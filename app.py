@@ -35,7 +35,9 @@ class Answer(Resource):
             logger.info(ans_list_init)
             answer_list = [a for a in ans_list_init]
             return jsonify(answer_list)
-        return "not found"
+        return {'text': "not found",
+                'channel_id': '0',
+                'timestamp': '0'}
 
 
 # @api.route('/api/v1/answer', methods=["GET"])
