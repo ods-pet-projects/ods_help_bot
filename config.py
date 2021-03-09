@@ -43,6 +43,7 @@ class ModelNames(enum.Enum):
     BERT = 'bert'
     BPE = 'bpe'
     USE = 'use'
+    SLACK = 'slack'
 
 
 # default model

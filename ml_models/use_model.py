@@ -10,6 +10,7 @@ logger = create_logger(__name__, logger_path['use'])
 
 FEATURE_SIZE = 768
 
+
 def singleton(cls):
     instance = None
 
@@ -21,6 +22,7 @@ def singleton(cls):
         return instance
 
     return inner
+
 
 class STEmbedder(BaseEmbedder):
     """
@@ -47,7 +49,7 @@ class STEmbedder(BaseEmbedder):
             logger.exception('exception msg %s', text)
             self.error_count += 1
         return np.zeros(FEATURE_SIZE)
-        
+
 
 def check_indexer():
     for q in test_queries:
@@ -63,9 +65,11 @@ def get_answer(query):
     ans_list = [get_text_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ans_list
 
+
 def get_answer_ind(query):
     ind_list = [get_new_ind_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
     return ind_list
+
 
 logger.info('use indexer started')
 indexer, df = prepare_indexer('use', logger)

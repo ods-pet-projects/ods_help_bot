@@ -109,6 +109,9 @@ def get_answer_ind(query, use_lower=False, use_keywords=False, use_remove_stopwo
             answer_list = bpe_model.get_answer_ind(query)
         if model_name == ModelNames.USE:
             answer_list = use_model.get_answer_ind(query)
+        if model_name == ModelNames.SLACK:
+            answer_list = use_model.get_slack_answer_ind(query)
+
         return answer_list
     except Exception as ex:
         print(ex)
