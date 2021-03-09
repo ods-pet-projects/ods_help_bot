@@ -78,13 +78,14 @@ def get_answer_ind(query):
 def get_slack_answer_ind(query, k=4):
     import requests
 
-    url = f"https://slack.com/api/search.messages?count={k}&query={query}&pretty=1"
+    url = f"https://slack.com/api/search.messages"
+    params = {"count": k, "query": query, "pretty": 1}
 
     headers = {
         'Authorization': f'Bearer {os.environ["USER_TOKEN"]}'
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = requests.request("GET", url, headers=headers, params=params)
     matches = json.loads(response.text).get('messages').get('matches')
     ind_list = ['_'.join((match.get('user'), re.sub(r'\.\d+', r'.0', match.get('ts')))) for match in matches] #TODO in labelled_all.csv at the end of the timestamp always zero
 
