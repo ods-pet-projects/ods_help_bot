@@ -1,7 +1,3 @@
-import json
-import os
-import re
-
 from sentence_transformers import SentenceTransformer
 from functools import wraps
 import numpy as np
@@ -72,23 +68,6 @@ def get_answer(query):
 
 def get_answer_ind(query):
     ind_list = [get_new_ind_by_ind(ind) for k, ind in indexer.return_closest(query, k=4)]
-    return ind_list
-
-
-def get_slack_answer_ind(query, k=4):
-    import requests
-
-    url = f"https://slack.com/api/search.messages"
-    params = {"count": k, "query": query, "pretty": 1}
-
-    headers = {
-        'Authorization': f'Bearer {os.environ["USER_TOKEN"]}'
-    }
-
-    response = requests.request("GET", url, headers=headers, params=params)
-    matches = json.loads(response.text).get('messages').get('matches')
-    ind_list = ['_'.join((match.get('user'), re.sub(r'\.\d+', r'.0', match.get('ts')))) for match in matches] #TODO in labelled_all.csv at the end of the timestamp always zero
-
     return ind_list
 
 
