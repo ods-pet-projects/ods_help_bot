@@ -29,9 +29,9 @@ logger_path = {
 }
 
 indexer_map = {
-    'bert': 'nmslib',
-    'use': 'nmslib',
-    'bpe': 'nmslib'
+    'bert': 'faiss',
+    'use': 'faiss',
+    'bpe': 'faiss'
 }
 
 API_URL = 'http://0.0.0.0:8080/api/v1'

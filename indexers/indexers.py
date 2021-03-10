@@ -7,7 +7,6 @@ import numpy as np
 from tqdm import tqdm
 tqdm.pandas()
 from utils.base_classes import BaseIndexer
-from config import INDEX_DIR
 
 class NMSlibIndexer(BaseIndexer):
     def __init__(self, model_name, logger):
@@ -43,8 +42,8 @@ class NMSlibIndexer(BaseIndexer):
 
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
-        if not os.path.exists(INDEX_DIR):
-            os.mkdir(INDEX_DIR)
+        if not os.path.exists(index_path):
+            os.mkdir(index_path)
         if not os.path.exists(index_path):
             self.logger.info(f'train {self.model_name} indexer started')
             names_sparse_matrix = self.make_data_embeddings(data)
@@ -106,8 +105,8 @@ class FaissIndexer(BaseIndexer):
 
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
-        if not os.path.exists(INDEX_DIR):
-            os.mkdir(INDEX_DIR)
+        if not os.path.exists(index_path):
+            os.mkdir(index_path)
         if not os.path.exists(index_path):
             self.logger.info(f'train {self.model_name} indexer started')
             names_matrix = self.make_data_embeddings(data)
@@ -141,9 +140,9 @@ class FaissIndexer(BaseIndexer):
         if self.index_is_loaded:
             r = self.model.sentence_embedding(text)
             r = np.array(r).astype('float32')
-            if self.metric == 'cosinesimil':
+            if self.space_type == 'cosinesimil':
                 faiss.normalize_L2(r)
-            distances, indexs = self.indexer.search(r, k)
+            _, indexs = self.index.search(r, k)
             return [(self.data[i], i) for i in indexs]
         else:
             raise IndexError("Index is not yet created or loaded")

@@ -1,7 +1,7 @@
 import pandas as pd
 from text_utils.utils import prepare_ans
 from config import INDEX_DIR, indexer_map, index_path, ifile_train_path
-from indexers import NMSlibIndexer, FaissIndexer
+from indexers.indexers import NMSlibIndexer, FaissIndexer
 
 df = pd.read_csv(ifile_train_path)
 MAX_TEXT_LEN = 300
