@@ -1,7 +1,7 @@
 import pandas as pd
 from text_utils.utils import prepare_ans
-from config import indexer_map, index_path, ifile_train_path
-from indexers.nmslib_indexer import NMSlibIndexer
+from config import INDEX_DIR, indexer_map, index_path, ifile_train_path
+from indexers.indexers import NMSlibIndexer, FaissIndexer
 
 df = pd.read_csv(ifile_train_path)
 MAX_TEXT_LEN = 300
@@ -10,9 +10,12 @@ MAX_TEXT_LEN = 300
 def prepare_indexer(model_name, logger):
     if indexer_map[model_name] == 'nmslib':
         indexer = NMSlibIndexer(model_name, logger)
+    elif indexer_map[model_name] == 'faiss':
+        indexer = FaissIndexer(model_name, logger)
     else:
         raise ValueError(f'Wrong indexer for {model_name} model specified')
-    indexer.create_index(index_path[model_name], df['text'].values)
+    indexer.create_index(f'{INDEX_DIR}/{indexer_map[model_name]}/{index_path[model_name]}',\
+         df['text'].values)
     return indexer, df
 
 

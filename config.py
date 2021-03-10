@@ -15,9 +15,9 @@ EVAL_DATA_DIR= f'{DATA}/labelled_all.csv'
 ifile_train_path = f'{DATA}/ods_new_base.csv'
 
 index_path = {
-    'bert': f'{INDEX_DIR}/bert_index',
-    'use': f'{INDEX_DIR}/st_bert_index',
-    'bpe': f'{INDEX_DIR}/bpe_index'
+    'bert': 'bert_index',
+    'use': 'st_bert_index',
+    'bpe': 'bpe_index'
 }
 
 logger_path = {
@@ -29,9 +29,9 @@ logger_path = {
 }
 
 indexer_map = {
-    'bert': 'nmslib',
-    'use': 'nmslib',
-    'bpe': 'nmslib'
+    'bert': 'faiss',
+    'use': 'faiss',
+    'bpe': 'faiss'
 }
 
 API_URL = 'http://0.0.0.0:8080/api/v1'
