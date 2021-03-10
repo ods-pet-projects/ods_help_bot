@@ -7,6 +7,7 @@ import numpy as np
 from tqdm import tqdm
 tqdm.pandas()
 from utils.base_classes import BaseIndexer
+from config import INDEX_DIR, indexer_map
 
 class NMSlibIndexer(BaseIndexer):
     def __init__(self, model_name, logger):
@@ -42,8 +43,8 @@ class NMSlibIndexer(BaseIndexer):
 
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
-        if not os.path.exists(index_path):
-            os.mkdir(index_path)
+        if not os.path.exists(f'{INDEX_DIR}/{indexer_map[self.model_name]}'):
+            os.mkdir(f'{INDEX_DIR}/{indexer_map[self.model_name]}')
         if not os.path.exists(index_path):
             self.logger.info(f'train {self.model_name} indexer started')
             names_sparse_matrix = self.make_data_embeddings(data)
@@ -96,7 +97,7 @@ class FaissIndexer(BaseIndexer):
         self.logger = logger
 
     def load_index(self, index_path, data):
-        self.index.read_index(index_path)
+        self.index = faiss.read_index(index_path)
         self.index_is_loaded = True
         self.data = data
 
@@ -105,8 +106,8 @@ class FaissIndexer(BaseIndexer):
 
     def create_index(self, index_path, data):
         start = pd.Timestamp.now()
-        if not os.path.exists(index_path):
-            os.mkdir(index_path)
+        if not os.path.exists(f'{INDEX_DIR}/{indexer_map[self.model_name]}'):
+            os.mkdir(f'{INDEX_DIR}/{indexer_map[self.model_name]}')
         if not os.path.exists(index_path):
             self.logger.info(f'train {self.model_name} indexer started')
             names_matrix = self.make_data_embeddings(data)
@@ -135,14 +136,15 @@ class FaissIndexer(BaseIndexer):
         self.logger.info('neg count %s', self.model.error_count)
         return np.array(names_matrix).astype('float32')
 
-    def return_closest(self, text, k=2, num_threads=2):
+    def return_closest(self, text, k=2):
         k = min(k, self.index.ntotal)
         if self.index_is_loaded:
             r = self.model.sentence_embedding(text)
             r = np.array(r).astype('float32')
+            r = np.expand_dims(r, axis=0)
             if self.space_type == 'cosinesimil':
                 faiss.normalize_L2(r)
             _, indexs = self.index.search(r, k)
-            return [(self.data[i], i) for i in indexs]
+            return [(self.data[i], i) for i in list(indexs[0])]
         else:
             raise IndexError("Index is not yet created or loaded")
