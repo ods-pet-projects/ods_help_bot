@@ -1,7 +1,6 @@
 import os
 import nmslib
 import faiss
-from sklearn.metrics import pairwise_distances
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -68,11 +67,15 @@ class NMSlibIndexer(BaseIndexer):
         self.logger.info('neg count %s', self.model.error_count)
         return names_sparse_matrix
 
-    def return_closest(self, text, k=2, num_threads=2):
+    def return_closest(self, text, k=2, num_threads=2, distance=False):
         if self.index_is_loaded:
             r = self.model.sentence_embedding(text)
             near_neighbors = self.index.knnQueryBatch(queries=[r], k=k, num_threads=num_threads)
-            return [(self.data[i], i) for i in near_neighbors[0][0]]
+            if distance:
+                return (near_neighbors[0][1], \
+                    [(self.data[i], i) for i in near_neighbors[0][0]])
+            else:
+                return [(self.data[i], i) for i in near_neighbors[0][0]]
         else:
             raise IndexError("Index is not yet created or loaded")
 
@@ -136,7 +139,7 @@ class FaissIndexer(BaseIndexer):
         self.logger.info('neg count %s', self.model.error_count)
         return np.array(names_matrix).astype('float32')
 
-    def return_closest(self, text, k=2):
+    def return_closest(self, text, k=2, distance=False):
         k = min(k, self.index.ntotal)
         if self.index_is_loaded:
             r = self.model.sentence_embedding(text)
@@ -144,7 +147,12 @@ class FaissIndexer(BaseIndexer):
             r = np.expand_dims(r, axis=0)
             if self.space_type == 'cosinesimil':
                 faiss.normalize_L2(r)
-            _, indexs = self.index.search(r, k)
-            return [(self.data[i], i) for i in list(indexs[0])]
+            dist, indexs = self.index.search(r, k)
+            dist = [1 - d for d in dist]
+            if distance:
+                return (dist, \
+                    [(self.data[i], i) for i in list(indexs[0])])
+            else:
+                return [(self.data[i], i) for i in list(indexs[0])]
         else:
             raise IndexError("Index is not yet created or loaded")

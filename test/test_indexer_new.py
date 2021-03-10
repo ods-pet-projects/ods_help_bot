@@ -13,10 +13,9 @@ class TestIndexer(unittest.TestCase):
         for q in questions:
             r = indexer.model.sentence_embedding(q)
             self.assertEqual(r.shape[0], 768)  # embedding dimension
-
-            res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertEqual(len(res[0][0]), 4)  # return 4 neighbours
-            self.assertLess(res[0][1][0], 1e-5)  # find itself, distance apx. 0
+            dis, res = indexer.return_closest(q, k=4, distance=True)
+            self.assertEqual(len(res), 4)  # return 4 neighbours
+            self.assertLess(dis[0][0], 1e-5)  # find itself, distance apx. 0
 
     def test_use_indexer(self):
         from ml_models.use_model import indexer
@@ -24,9 +23,9 @@ class TestIndexer(unittest.TestCase):
             r = indexer.model.sentence_embedding(q)
             self.assertEqual(r.shape[0], 768)  # embedding dimension
 
-            res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertEqual(len(res[0][0]), 4)  # return 4 neighbours
-            self.assertLess(res[0][1][0], 1e-5)  # find itself, distance apx. 0
+            dis, res = indexer.return_closest(q, k=4, distance=True)
+            self.assertEqual(len(res), 4)  # return 4 neighbours
+            self.assertLess(dis[0][0], 1e-5)  # find itself, distance apx. 0
 
     def test_bpe_indexer(self):
         from ml_models.bpe_model import indexer
@@ -34,9 +33,9 @@ class TestIndexer(unittest.TestCase):
             r = indexer.model.sentence_embedding(q)
             self.assertEqual(r.shape[0], 300)  # embedding dimension
 
-            res = indexer.index.knnQueryBatch(queries=[r], k=4, num_threads=2)
-            self.assertEqual(len(res[0][0]), 4)  # return 4 neighbours
-            self.assertLess(res[0][1][0], 1e-5)  # find itself, distance apx. 0
+            dis, res = indexer.return_closest(q, k=4, distance=True)
+            self.assertEqual(len(res), 4)  # return 4 neighbours
+            self.assertLess(dis[0][0], 1e-5)  # find itself, distance apx. 0
 
 
 def main():
