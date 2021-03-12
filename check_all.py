@@ -74,6 +74,7 @@ class ResourceChecker:
 
 
 def run_validation():
+    print('run validation started')
     rc = ResourceChecker()
     rc.check_all()
 
