@@ -125,7 +125,7 @@ def build_index():
         doc = {
             "doc_id": client_msg_id,
             "doc_title": channel,
-            "text": text,
+            "text": text[:MAX_TEXT_LEN],
             "answer_text": answer_text,
             "show_text": ans_dict['text'],
             "link": doc_links,
