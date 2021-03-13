@@ -4,7 +4,7 @@ This project is a telegram bot trained on Open Data Science slack posts history
 ## Structure
 - `chatbot.py` - telegram bot for messaging
 - `support_model.py` - question answering AI
-- `scripts/prepare_data.py` - dataset parsing
+- `notebooks/know_base.ipynb` - dataset parsing
 - `models` - answering models
 - - `elasticsearch_baseline` - fuzzy search
 - - `bert_emb_baseline` - BERT embedding ranking model
@@ -12,10 +12,11 @@ This project is a telegram bot trained on Open Data Science slack posts history
 - - `use_baseline` - USE embedding rankinig model
 - Run bot `python chatbot.py`
 - Available in telegram by address `@ods_help_bot`
+- Available in Slack by address `digestbot` QnA functionality
 ## Features
 - answer question
 - show other relevant answer (top 4)
-- estimate question (Good, Bad)
+- estimate question (Good, Bad) only in telegram by now
 - show history
 ## Running
 - You need your own telegram TOKEN from BotFather
