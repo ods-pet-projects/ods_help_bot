@@ -3,7 +3,7 @@ import numpy as np
 from utils.base_classes import BaseEmbedder
 from utils.indexer_utils import get_text_by_ind, get_new_ind_by_ind, prepare_indexer, test_queries
 from text_utils.utils import create_logger
-from config import logger_path
+from config import logger_path, ModelNames
 from bpemb import BPEmb
 
 logger = create_logger(__name__, logger_path['bpe'])
@@ -66,7 +66,10 @@ def get_answer_ind(query):
     return ind_list
 
 
-logger.info('bpe indexer started')
-indexer, df = prepare_indexer('bpe', logger)
-logger.info('bpe indexer ready')
-check_indexer()
+from config import used_models
+
+if ModelNames.BPE in used_models:
+    logger.info('bpe indexer started')
+    indexer, df = prepare_indexer('bpe', logger)
+    logger.info('bpe indexer ready')
+    check_indexer()

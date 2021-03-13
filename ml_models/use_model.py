@@ -4,7 +4,7 @@ import numpy as np
 from utils.base_classes import BaseEmbedder
 from utils.indexer_utils import get_text_by_ind, get_new_ind_by_ind, prepare_indexer, test_queries
 from text_utils.utils import create_logger
-from config import logger_path
+from config import logger_path, ModelNames
 
 logger = create_logger(__name__, logger_path['use'])
 
@@ -71,7 +71,10 @@ def get_answer_ind(query):
     return ind_list
 
 
-logger.info('use indexer started')
-indexer, df = prepare_indexer('use', logger)
-logger.info('use indexer ready')
-check_indexer()
+from config import used_models
+
+if ModelNames.USE in used_models:
+    logger.info('use indexer started')
+    indexer, df = prepare_indexer('use', logger)
+    logger.info('use indexer ready')
+    check_indexer()

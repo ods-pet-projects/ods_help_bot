@@ -10,7 +10,8 @@ from support_model import MODEL_NAME, ModelNames, get_keywords, remove_stop_word
 from ml_models import elastic_search_baseline, bert_model, bpe_model, use_model
 
 class Evaluator:
-    def __init__(self, eval_data_dir, eval_files_dir):
+    def __init__(self, eval_data_dir, eval_files_dir, evaluate_models=None):
+        self.evaluate_models = evaluate_models
         self.eval_ds = self.create_eval_ds(eval_data_dir, eval_files_dir)
         self.report = None
 
@@ -37,7 +38,8 @@ class Evaluator:
         lines = []
         wrong_ans = []
         train_df = pd.read_csv(ifile_train_path)
-        for model_name in ModelNames:
+        evaluate_models = self.evaluate_models or ModelNames
+        for model_name in evaluate_models:
             score_top_1 = 0
             score_top_4 = 0
             n = self.eval_ds.shape[0]
