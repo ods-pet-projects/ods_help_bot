@@ -12,7 +12,7 @@ This project is a telegram bot trained on Open Data Science slack posts history
 - - `use_baseline` - USE embedding rankinig model
 - Run bot `python chatbot.py`
 - Available in telegram by address `@ods_help_bot`
-- Available in Slack by address `digestbot` QnA functionality
+- Available in Slack by address [`digestbot`](https://github.com/maybe-hello-world/digestbot) QnA functionality
 ## Features
 - answer question
 - show other relevant answer (top 4)
