@@ -29,7 +29,8 @@ def get_answer_first(query):
 def get_answer(query):
     try:
         return get_answer_first(query)
-    except:
+    except Exception as ex:
+        print(ex)
         subprocess.call('systemctl restart elasticsearch', shell=True)
         sleep(10)
         return get_answer_first(query)
@@ -94,8 +95,10 @@ def find_urls(string):
 
 
 def build_index():
-    if es.indices.exists(index=INDEX_NAME):
-        es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
+
+    # if es.indices.exists(index=INDEX_NAME):
+    #     es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
+
     # doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
     # data = pd.read_csv(f'{doc_dir}/channels_posts.csv')
@@ -110,11 +113,14 @@ def build_index():
     print('pref shape:', init_shape)
     print('new shape:', new_shape)
     print('dropped:', init_shape - new_shape)
-    success_count = 0
+    # success_count = 0
+    success_count = 28001
     doc_id = 0
     data = data.dropna(subset=['answer_text'])
 
     for doc_id, doc_row in data.iterrows():
+        if doc_id < 28001:
+            continue
         client_msg_id = doc_row['new_ind']
         channel = doc_row['channel']
         text = doc_row['text']
