@@ -3,7 +3,7 @@ from text_utils.utils import prepare_ans
 from config import INDEX_DIR, indexer_map, index_path, ifile_train_path
 from indexers.indexers import NMSlibIndexer, FaissIndexer
 
-df = pd.read_csv(ifile_train_path)
+df = pd.read_csv(ifile_train_path, dtype={'timestamp': str})
 MAX_TEXT_LEN = 300
 
 
