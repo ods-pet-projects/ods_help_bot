@@ -14,17 +14,27 @@ def prepare_indexer(model_name, logger):
         indexer = FaissIndexer(model_name, logger)
     else:
         raise ValueError(f'Wrong indexer for {model_name} model specified')
-    indexer.create_index(f'{INDEX_DIR}/{indexer_map[model_name]}/{index_path[model_name]}',\
-         df['text'].values)
+    indexer.create_index(f'{INDEX_DIR}/{indexer_map[model_name]}/{index_path[model_name]}', \
+                         df['text'].values)
     return indexer, df
 
 
 def get_text_by_ind(ind):
     ans_row = df.iloc[ind]
+    return prepare_ans_by_row(ans_row)
+
+
+def get_text_by_doc_id(doc_id):
+    row = df.query('new_ind == @doc_id').iloc[0]
+    return prepare_ans_by_row(row)
+
+
+def prepare_ans_by_row(ans_row):
     channel = ans_row['channel']
     text = ans_row['text']
     ans_text = ans_row['answer_text']
-    channel_id, timestamp = ans_row['new_ind'].split('_')
+    channel_id = ans_row['channel_slack_id']
+    timestamp = ans_row['timestamp']
     return prepare_ans(channel, text, ans_text, MAX_TEXT_LEN, channel_id, timestamp)
 
 

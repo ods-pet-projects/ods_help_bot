@@ -5,6 +5,8 @@ import pandas as pd
 import sys
 import re
 
+from utils.indexer_utils import get_text_by_doc_id
+
 sys.path.append('..')
 from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
@@ -54,16 +56,9 @@ def print_res(res):
         for i, item in enumerate(res['hits']['hits']):
             if i > MAX_ANSWER_COUNT:
                 break
-
-            doc_preview_text = item['_source']['show_text'] + '...'
-
-            if doc_preview_text not in ans_list:
-                ans = {'text': doc_preview_text,
-                       'channel_id': item['_source']['channel_id'],
-                       'timestamp': item['_source']['timestamp']
-                       }
-                ans_list.append(ans)
-                ind_list.append(item['_source']['doc_id'])
+            ans = get_text_by_doc_id(item['_source']['doc_id'])
+            ans_list.append(ans)
+            ind_list.append(item['_source']['doc_id'])
         return ans_list, ind_list
     else:
         empty_ans = {'text': "not found :(\nPlease paraphrase your query",
