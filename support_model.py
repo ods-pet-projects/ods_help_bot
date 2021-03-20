@@ -46,7 +46,7 @@ def remove_slack_commands(query):
 
 
 def is_query_in_row(gs_row, query):
-    return query in gs_row['known_question'] or query in gs_row['known_question_synonimous'].split(', ')
+    return query in gs_row['known_question'] or query in gs_row['known_question_synonymous'].split(', ')
 
 
 def get_answer_if_known(query):
