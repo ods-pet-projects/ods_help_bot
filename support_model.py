@@ -46,7 +46,7 @@ def remove_slack_commands(query):
 
 
 def get_answer_if_known(query):
-    gc = gspread.service_account(filename='ods-qna-dd4a610895ad.json')
+    gc = gspread.service_account(filename='ods-qna-secret.json')
     questions = gc.open("faq fixed").sheet1
 
     list_of_dicts = questions.get_all_records()
