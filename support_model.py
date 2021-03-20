@@ -45,15 +45,19 @@ def remove_slack_commands(query):
     return query
 
 
+def is_query_in_row(gs_row, query):
+    return query in gs_row['known_question'] or query in gs_row['known_question_synonimous'].split(', ')
+
+
 def get_answer_if_known(query):
     gc = gspread.service_account(filename='ods-qna-secret.json')
     questions = gc.open("faq fixed").sheet1
 
-    list_of_dicts = questions.get_all_records()
+    gs_rows = questions.get_all_records()
 
-    for dct in list_of_dicts:
-        if query in dct['known_question']:
-            return [dct['known_answer']]
+    for gs_row in gs_rows:
+        if is_query_in_row(gs_row, query):
+            return [gs_row['known_answer']]
 
 
 def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=False, model_name=MODEL_NAME,
