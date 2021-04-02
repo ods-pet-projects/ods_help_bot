@@ -5,9 +5,10 @@ import pandas as pd
 import sys
 import re
 
+sys.path.append('..')
+
 from utils.indexer_utils import get_text_by_doc_id
 
-sys.path.append('..')
 from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
 
