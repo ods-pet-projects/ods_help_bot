@@ -91,9 +91,8 @@ def find_urls(string):
 
 
 def build_index():
-
-    # if es.indices.exists(index=INDEX_NAME):
-    #     es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
+    if es.indices.exists(index=INDEX_NAME):
+        es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
 
     # doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
@@ -113,31 +112,31 @@ def build_index():
     success_count = 28001
     doc_id = 0
     data = data.dropna(subset=['answer_text'])
+    for chunk_num in [28001, 52000, 90000]:
+        for doc_id, doc_row in data.iterrows():
+            if doc_id < chunk_num:
+                continue
+            client_msg_id = doc_row['new_ind']
+            channel = doc_row['channel']
+            text = doc_row['text']
+            answer_text = doc_row['answer_text']
+            channel_id, timestamp = doc_row['new_ind'].split('_')
+            doc_links = find_urls(text)
+            ans_dict = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN, channel_id, timestamp)
+            doc = {
+                "doc_id": client_msg_id,
+                "doc_title": channel,
+                "text": text[:MAX_TEXT_LEN],
+                "answer_text": answer_text,
+                "show_text": ans_dict['text'],
+                "link": doc_links,
+                "channel_id": channel_id,
+                "timestamp": timestamp
+            }
 
-    for doc_id, doc_row in data.iterrows():
-        if doc_id < 28001:
-            continue
-        client_msg_id = doc_row['new_ind']
-        channel = doc_row['channel']
-        text = doc_row['text']
-        answer_text = doc_row['answer_text']
-        channel_id, timestamp = doc_row['new_ind'].split('_')
-        doc_links = find_urls(text)
-        ans_dict = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN, channel_id, timestamp)
-        doc = {
-            "doc_id": client_msg_id,
-            "doc_title": channel,
-            "text": text[:MAX_TEXT_LEN],
-            "answer_text": answer_text,
-            "show_text": ans_dict['text'],
-            "link": doc_links,
-            "channel_id": channel_id,
-            "timestamp": timestamp
-        }
-
-        if add_doc_to_index(doc):
-            success_count += 1
-            print(success_count)
+            if add_doc_to_index(doc):
+                success_count += 1
+                print(success_count)
 
     print(f'success rate {success_count / (doc_id + 1):0.2f}')
     check_elastic_ans()
