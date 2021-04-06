@@ -69,7 +69,9 @@ def get_answer(query, use_lower=True, use_keywords=False, use_remove_stopwords=F
         return answer_list
     except Exception as ex:
         print('exception:', ex)
-        return ["not found :(\nPlease paraphrase your query"]
+        return [{'text': "not found :(\nPlease paraphrase your query",
+                 'channel_id': '0',
+                 'timestamp': '0'}]
 
 
 def main():
