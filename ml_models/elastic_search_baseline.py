@@ -130,7 +130,7 @@ def build_index():
     doc_id = 0
     data = data.dropna(subset=['answer_text'])
 
-    anchor_lat_ind = last_doc_ind_anchor()
+    anchor_lat_ind = last_doc_ind_anchor() + 1  # fix to avoid strange doc
 
     for doc_id, doc_row in data.iterrows():
         if doc_id <= anchor_lat_ind and anchor_lat_ind != 0:
@@ -155,7 +155,7 @@ def build_index():
 
         if add_doc_to_index(doc):
             success_count += 1
-            print(success_count)
+            print(doc_id)
             save_doc_id_anchor(doc_id)
 
     print(f'success rate {success_count / (doc_id + 1):0.2f}')
