@@ -1,21 +1,24 @@
-from time import sleep
-import subprocess
 from elasticsearch import Elasticsearch
+import os
 import pandas as pd
-import sys
 import re
+import subprocess
+import sys
+from time import sleep
+
 
 sys.path.append('..')
 
 from utils.indexer_utils import get_text_by_doc_id
 
-from config import DATA, ifile_train_path, MAX_ANSWER_COUNT
+from config import INDEX_DIR, ifile_train_path, MAX_ANSWER_COUNT
 from text_utils.utils import prepare_ans
 
 MAX_TEXT_LEN = 600
 es = Elasticsearch()
 
 INDEX_NAME = "ods-index"
+anchor_file_path = f'{INDEX_DIR}/{INDEX_NAME}.anchor'
 
 
 def get_answer_first(query):
@@ -90,9 +93,24 @@ def find_urls(string):
     return [x[0] for x in url]
 
 
+def last_doc_ind_anchor():
+    if not os.path.exists(anchor_file_path):
+        return 0
+
+    with open(anchor_file_path) as anchor_file:
+        last_ind = anchor_file.read()
+    return int(last_ind)
+
+
+def save_doc_id_anchor(ind):
+    with open(anchor_file_path, 'w') as ofile:
+        ofile.write(f"{ind}")
+
+
 def build_index():
-    if es.indices.exists(index=INDEX_NAME):
+    if es.indices.exists(index=INDEX_NAME) and not last_doc_ind_anchor():
         es.indices.delete(index=INDEX_NAME, ignore=[400, 404])
+        print('>>>>deleted index', INDEX_NAME)
 
     # doc_dir = DATA
     # data = pd.read_csv(f'{doc_dir}/channels_posts_all.csv')
@@ -108,35 +126,37 @@ def build_index():
     print('pref shape:', init_shape)
     print('new shape:', new_shape)
     print('dropped:', init_shape - new_shape)
-    # success_count = 0
-    success_count = 28001
+    success_count = 0
     doc_id = 0
     data = data.dropna(subset=['answer_text'])
-    for chunk_num in [28001, 52000, 90000]:
-        for doc_id, doc_row in data.iterrows():
-            if doc_id < chunk_num:
-                continue
-            client_msg_id = doc_row['new_ind']
-            channel = doc_row['channel']
-            text = doc_row['text']
-            answer_text = doc_row['answer_text']
-            channel_id, timestamp = doc_row['new_ind'].split('_')
-            doc_links = find_urls(text)
-            ans_dict = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN, channel_id, timestamp)
-            doc = {
-                "doc_id": client_msg_id,
-                "doc_title": channel,
-                "text": text[:MAX_TEXT_LEN],
-                "answer_text": answer_text,
-                "show_text": ans_dict['text'],
-                "link": doc_links,
-                "channel_id": channel_id,
-                "timestamp": timestamp
-            }
 
-            if add_doc_to_index(doc):
-                success_count += 1
-                print(success_count)
+    anchor_lat_ind = last_doc_ind_anchor()
+
+    for doc_id, doc_row in data.iterrows():
+        if doc_id <= anchor_lat_ind and anchor_lat_ind != 0:
+            continue
+        client_msg_id = doc_row['new_ind']
+        channel = doc_row['channel']
+        text = doc_row['text']
+        answer_text = doc_row['answer_text']
+        channel_id, timestamp = doc_row['new_ind'].split('_')
+        doc_links = find_urls(text)
+        ans_dict = prepare_ans(channel, text, answer_text, MAX_TEXT_LEN, channel_id, timestamp)
+        doc = {
+            "doc_id": client_msg_id,
+            "doc_title": channel,
+            "text": text[:MAX_TEXT_LEN],
+            "answer_text": answer_text,
+            "show_text": ans_dict['text'],
+            "link": doc_links,
+            "channel_id": channel_id,
+            "timestamp": timestamp
+        }
+
+        if add_doc_to_index(doc):
+            success_count += 1
+            print(success_count)
+            save_doc_id_anchor(doc_id)
 
     print(f'success rate {success_count / (doc_id + 1):0.2f}')
     check_elastic_ans()
